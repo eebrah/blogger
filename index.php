@@ -15,6 +15,8 @@ require_once( "./User.class.php" );
 require_once( "./Token.class.php" );
 require_once( "./Article.class.php" );
 
+require_once( "./markdown.php" );
+
 session_start();
 
 { // page building variables
@@ -73,7 +75,7 @@ switch( $section ) {
 			$pageContent .= '
 <p>' . $article -> getUniqueID() . '</p>
 <h1>' . $article -> getTitle() . '</h1>
-<p>' . $article -> getBody() . '</p>';
+' . Markdown( $article -> getBody() );
 /*		
 		}
 		else {
@@ -85,6 +87,110 @@ switch( $section ) {
 */	
 	}
 	break;
+	
+	case "articles" : {
+		
+		$action = "list";
+		
+		if( isset( $_REQUEST[ "action" ] ) ) {
+			
+			$action = $_REQUEST[ "action" ];
+		
+		}
+		
+		switch( $action ) {
+			
+			case "list" : {
+				
+				$articles = getArticles();
+				
+				if( count( $articles ) > 0 ) {
+				
+					$pageContent .= '
+<div>
+	<table>
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>datetime</th>
+				<th>title</th>
+				<th>actions</th>
+			</tr>
+		</thead>
+		<tbody>';
+		
+						$count = 1;
+				
+						foreach( $articles as $articleID ) {
+							
+							$article = new Article( $articleID );
+				
+							$pageContent .= '
+			<tr>
+				<td>' . $count . '</td>
+				<td>' . $article -> getDateCreated() . '</td>
+				<td>' . substr( $article -> getTitle(), 0, 30 ) . ' ...</td>
+				<td>
+					<ul>
+						<li>
+							<a href="?section=articles&amp;action=view&amp;target=">view</a>
+						</li>
+						<li>
+							<a href="?section=articles&amp;action=edit&amp;target=">edit</a>
+						</li>
+					</ul>
+				</td>
+			</tr>';
+			
+					}
+			
+					$pageContent .= '
+		</tbody>
+	</table>
+</div>';
+
+				}
+				else {
+					
+					$pageContent .= '
+<div class="dialog">
+	<p>You have no articles</p>
+</div>';
+				
+				}
+			
+			}
+			break;
+			
+			case "view" : {
+				
+				if( isset( $_REQUEST[ "target" ] ) ) {
+					
+					$article = new Article( $_REQUEST[ "target" ] );
+					
+					$pageContent .= '
+<div class="article">
+	<h1>' . $article -> getTitle() . '</h1>
+	' . Markdown( $article -> getBody ) . '
+</div>';
+				
+				}
+				else {
+					
+					$pageContent .= '
+<div class="dialog">
+	<p>you have to specify an article to view</p>
+</div>';
+						
+				}
+			
+			}
+			break;
+		
+		}
+	
+	} 
+	break;	
 
 }
 

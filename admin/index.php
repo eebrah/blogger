@@ -64,25 +64,404 @@ if( isset( $_REQUEST[ "section" ] ) ) {
 
 switch( $section ) {
 	
-	case "home" : {
+	case "home" : {	
+	}
+	break;
+	
+	case "articles" : {
 		
-		$article = new Article( "DTMIU" );
+		$action = "list";
 		
-//		if( $article -> saveToDB() ) {
+		if( isset( $_REQUEST[ "action" ] ) ) {
 			
-			$pageContent .= '
-<p>' . $article -> getUniqueID() . '</p>
-<h1>' . $article -> getTitle() . '</h1>
-<p>' . $article -> getBody() . '</p>';
-/*		
-		}
-		else {
-			
-			$pageContent .= '
-<p>Sorry, no save :(</p>';
+			$action = $_REQUEST[ "action" ];
 		
 		}
-*/	
+		
+		switch( $action ) {
+			
+			case "list" : {
+				
+				$articles = getArticles();
+				
+				if( count( $articles ) > 0 ) {
+				
+					$pageContent .= '
+<div>
+	<table>
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>datetime</th>
+				<th>title</th>
+				<th>actions</th>
+			</tr>
+		</thead>
+		<tbody>';
+		
+						$count = 1;
+				
+						foreach( $articles as $articleID ) {
+							
+							$article = new Article( $articleID );
+				
+							$pageContent .= '
+			<tr>
+				<td>' . $count . '</td>
+				<td>' . $article -> getDateCreated() . '</td>
+				<td>' . substr( $article -> getTitle(), 0, 30 ) . ' ...</td>
+				<td>
+					<ul>
+						<li>
+							<a href="?section=articles&amp;action=view&amp;target=">view</a>
+						</li>
+						<li>
+							<a href="?section=articles&amp;action=edit&amp;target=">edit</a>
+						</li>
+					</ul>
+				</td>
+			</tr>';
+			
+					}
+			
+					$pageContent .= '
+		</tbody>
+	</table>
+</div>';
+
+				}
+				else {
+					
+					$pageContent .= '
+<div class="dialog">
+	<p>You have no articles</p>
+</div>';
+				
+				}
+			
+			}
+			break;
+			
+			case "add" : {
+
+				if( isset( $_POST[ "body" ] ) && isset( $_POST[ "title" ] ) ) {
+					
+					$article = new Article( "00000", $_POST[ "body" ], $_POST[ "title" ] );
+					
+					if( $article -> saveToDB() ) {
+						
+						$pageContent .= '
+<div class="dialog">
+	<p>Success!</p>
+</div>';
+						
+					}
+					else {
+						
+						$pageContent .= '
+<div class="dialog">
+	<p>Could not save to DB</p>
+</div>';
+					
+					}
+				
+				}
+				else {
+					
+					$pageContent .= '
+<div>
+	<form action="?section=articles&amp;action=add"
+	      method="post">
+		<fieldset class="info">
+			<legend>article info</legend>
+			<div class="row">
+				<label>title</label>
+				<input type="text"
+				       name="title"
+				       placeholder="article title"
+				       required="required" />
+			</div>
+			<div class="row">
+				<label>article</label>
+				<textarea name="body"
+				          placeholder="type the article here"
+				          required="reuired"></textarea>
+			</div>
+		</fieldset>
+		<fieldset class="buttons">
+			<button type="reset">reset</button>
+			<button type="submit">submit</button>
+		</fieldset>
+	</form>
+</div>';
+					
+				}
+				
+			}
+			break;
+			
+			case "edit" : {
+				
+				if( isset( $_REQUEST[ "target" ] ) ) {
+					
+					$article = new Article( $_REQUEST[ "target" ] );
+					
+					if( isset( $_POST[ "body" ] ) && isset( $_POST[ "title" ] ) ) {
+					
+						$article -> setTitle( $_POST[ "title" ] );
+						$article -> setBody( $_POST[ "body" ] );
+						
+						if( $article -> updateDB() ) {
+						
+						$pageContent .= '
+<div class="dialog">
+	<p>Success!</p>
+</div>';
+							
+						}
+						else {
+						
+						$pageContent .= '
+<div class="dialog">
+	<p>Could not update DB</p>
+</div>';
+						
+						}
+					
+					}
+					else {
+						
+						$pageContent .= '
+<div>
+	<form action="?section=articles&amp;action=edit"
+	      method="post">
+		<fieldset class="info">
+			<legend>article info</legend>
+			<div class="row">
+				<label>title</label>
+				<input type="text"
+				       name="title"
+				       value="' . $article -> getTitle() . '"
+				       required="required" />
+			</div>
+			<div class="row">
+				<label>article</label>
+				<textarea name="body"
+				          required="reuired">' . $article -> getBody() . '</textarea>
+			</div>
+		</fieldset>
+		<fieldset class="buttons">
+			<button type="reset">reset</button>
+			<button type="submit">submit</button>
+		</fieldset>
+	</form>
+</div>';
+					
+					}
+				
+				}
+				else {
+					
+					$pageContent .= '
+<div class="dialog">
+	<p>you have to specify an article to edit</p>
+</div>';
+						
+				}
+			
+			}
+			break;
+			
+			case "view" : {
+				
+				if( isset( $_REQUEST[ "target" ] ) ) {
+					
+					$article = new Article( $_REQUEST[ "target" ] );
+					
+					$pageContent .= '
+<div class="article">
+	<h1>' . $article -> getTitle() . '</h1>
+	' . Markdown( $article -> getBody ) . '
+</div>';
+				
+				}
+				else {
+					
+					$pageContent .= '
+<div class="dialog">
+	<p>you have to specify an article to view</p>
+</div>';
+						
+				}
+			
+			}
+			break;
+		
+		}
+	
+	} 
+	break;
+	
+	case "comments" : {
+		
+		$action = "list";
+		
+		if( isset( $_REQUEST[ "action" ] ) ) {
+			
+			$action = $_REQUEST[ "action" ];
+		
+		}
+		
+		switch( $action ) {
+			
+			case "list" : {
+				
+				$comments = getComments();
+				
+				if( count( $comments ) > 0 ) {
+				
+					$pageContent .= '
+<div>
+	<table>
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>datetime</th>
+				<th>article title</th>
+				<th>actions</th>
+			</tr>
+		</thead>
+		<tbody>';
+		
+						$count = 1;
+				
+						foreach( $comments as $commentID ) {
+							
+							$comment = new Comment( $commentID );
+							
+							$article = new Article( $comment -> getArticle() );
+				
+							$pageContent .= '
+			<tr>
+				<td>' . $count . '</td>
+				<td>' . $comment -> getDateCreated() . '</td>
+				<td>' . substr( $article -> getTitle(), 0, 30 ) . ' ...</td>
+				<td>
+					<ul>
+						<li>
+							<a href="?section=comments&amp;action=view&amp;target=">view</a>
+						</li>
+						<li>
+							<a href="?section=comments&amp;action=edit&amp;target=">edit</a>
+						</li>
+					</ul>
+				</td>
+			</tr>';
+			
+					}
+			
+					$pageContent .= '
+		</tbody>
+	</table>
+</div>';
+
+				}
+				else {
+					
+					$pageContent .= '
+<div class="dialog">
+	<p>You have no comments</p>
+</div>';
+				
+				}
+			
+			}
+			break;
+/*			
+			case "add" : {
+
+				if( isset( $_POST[ "body" ] ) && isset( $_POST[ "title" ] ) ) {
+					
+					$comment = new Comment( "00000", $_POST[ "body" ], $_POST[ "title" ] );
+					
+					if( $comment -> saveToDB() ) {
+						
+						$pageContent .= '
+<div class="dialog">
+	<p>Success!</p>
+</div>';
+						
+					}
+					else {
+						
+						$pageContent .= '
+<div class="dialog">
+	<p>Could not save to DB</p>
+</div>';
+					
+					}
+				
+				}
+				else {
+					
+					$pageContent .= '
+<div>
+	<form action="?section=comments&amp;action=add"
+	      method="post">
+		<fieldset class="info">
+			<legend>comment info</legend>
+			<div class="row">
+				<label>title</label>
+				<input type="text"
+				       name="title"
+				       placeholder="comment title"
+				       required="required" />
+			</div>
+			<div class="row">
+				<label>comment</label>
+				<textarea name="body"
+				          placeholder="type the comment here"
+				          required="reuired"></textarea>
+			</div>
+		</fieldset>
+		<fieldset class="buttons">
+			<button type="reset">reset</button>
+			<button type="submit">submit</button>
+		</fieldset>
+	</form>
+</div>';
+					
+				}
+				
+			}
+			break;
+*/			
+			case "view" : {
+				
+				if( isset( $_REQUEST[ "target" ] ) ) {
+					
+					$comment = new Comment( $_REQUEST[ "target" ] );
+					
+					$pageContent .= '
+<div class="comment">
+	' . Markdown( $comment -> getBody ) . '
+</div>';
+				
+				}
+				else {
+					
+					$pageContent .= '
+<div class="dialog">
+	<p>you have to specify an comment to view</p>
+</div>';
+						
+				}
+			
+			}
+			break;
+		
+		}
+	
 	}
 	break;
 

@@ -2,26 +2,26 @@
 
 require_once( "Post.class.php" );
 
-Class Article extends Post {
+Class Comment extends Post {
 
-	private $title;
+	private $article;
 	
-	function setTitle( $title ) { $this -> title = $title; }
+	function setArticle( $article ) { $this -> article = $article; }
 	
-	function getTitle() { return $this -> title; }
+	function getArticle() { return $this -> article; }
 	
 	function saveToDB( $returnType = 0 ) {
 		
 		GLOBAL $dbh;
 		
 		$query = '
-INSERT INTO `articleDetails` (
+INSERT INTO `commentDetails` (
 	  `uniqueID`
-	, `title`
+	, `article`
 )
 VALUES (
 	  "' . mysql_escape_string( $this -> getUniqueID() ) . '"
-	, "' . mysql_escape_string( $this -> getTitle() ) . '"
+	, "' . mysql_escape_string( $this -> getArticle() ) . '"
 )';
 	
 		switch( $returnType ) {
@@ -74,9 +74,9 @@ VALUES (
 		
 		$query = '
 SELECT
-	`title`
+	`article`
 FROM
-	`articleDetails`
+	`commentDetails`
 WHERE
 	`uniqueID` = "' . mysql_escape_string( $this -> getUniqueID() ) . '"';
 	
@@ -93,7 +93,7 @@ WHERE
 					
 					$row = $statement -> fetch();
 					
-					$this -> setTitle( $row[ "title" ] );
+					$this -> setArticle( $row[ "article" ] );
 					
 					$returnValue = true;
 					
@@ -126,9 +126,9 @@ WHERE
 		
 		$query = '
 UPDATE
-	`articleDetails`
+	`commentDetails`
 SET
-	`title` = "' . mysql_escape_string( $this -> getTitle() ) . '"
+	`article` = "' . mysql_escape_string( $this -> getArticle() ) . '"
 WHERE
 	`uniqueID` = "' . $this -> getUniqueID() . '"';
 		
@@ -164,13 +164,13 @@ WHERE
 	
 	function __construct( $uniqueID = "00000",
 	                      $body = "",
-	                      $title = "" ) {
+	                      $article = "" ) {
 
 		parent::__construct( $uniqueID, $body );
 
 		if( $uniqueID == "00000" ) {
 
-			$this -> setTitle( $title );
+			$this -> setArticle( $article );
 
 		}
 		else {
@@ -183,6 +183,10 @@ WHERE
 
 }
 
+function getComments( $filter = "all" ) {
+	
 
+
+}
 
 ?>
