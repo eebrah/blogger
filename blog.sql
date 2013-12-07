@@ -1,0 +1,113 @@
+-- phpMyAdmin SQL Dump
+-- version 3.5.8.2
+-- http://www.phpmyadmin.net
+--
+-- Host: localhost
+-- Generation Time: Dec 07, 2013 at 05:33 AM
+-- Server version: 5.5.33a-MariaDB
+-- PHP Version: 5.5.6
+
+SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+
+--
+-- Database: `blog`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `accountDetails`
+--
+
+CREATE TABLE IF NOT EXISTS `accountDetails` (
+  `uniqueID` varchar(5) NOT NULL,
+  `screenname` varchar(80) NOT NULL,
+  `email` varchar(80) NOT NULL,
+  `password` varchar(80) NOT NULL,
+  `status` int(11) NOT NULL DEFAULT '1',
+  `accessLevel` int(11) NOT NULL DEFAULT '2',
+  PRIMARY KEY (`uniqueID`),
+  UNIQUE KEY `screenname` (`screenname`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `accountDetails`
+--
+
+INSERT INTO `accountDetails` (`uniqueID`, `screenname`, `email`, `password`, `status`, `accessLevel`) VALUES
+('C55VB', 'manuel', 'kipronosoi@gmail.com', '5f4dcc3b5aa765d61d8327deb882cf99', 1, 2),
+('G67BA', 'admin', 'admin@ibrahimngeno.me.ke', '020763de46dfb2a37001c0f129b61104', 1, 0),
+('Y6D2K', 'eebrah', 'eebrah@gmail.com', '5f4dcc3b5aa765d61d8327deb882cf99', 1, 2);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `articleDetails`
+--
+
+CREATE TABLE IF NOT EXISTS `articleDetails` (
+  `uniqueID` varchar(5) NOT NULL,
+  `title` varchar(80) NOT NULL,
+  PRIMARY KEY (`uniqueID`),
+  UNIQUE KEY `title` (`title`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `commentDetails`
+--
+
+CREATE TABLE IF NOT EXISTS `commentDetails` (
+  `uniqueID` varchar(5) NOT NULL,
+  `article` varchar(5) NOT NULL,
+  PRIMARY KEY (`uniqueID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `postDetails`
+--
+
+CREATE TABLE IF NOT EXISTS `postDetails` (
+  `uniqueID` varchar(5) NOT NULL,
+  `body` text NOT NULL,
+  `dateCreated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `datePublished` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `author` varchar(5) NOT NULL DEFAULT '00000',
+  PRIMARY KEY (`uniqueID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `userDetails`
+--
+
+CREATE TABLE IF NOT EXISTS `userDetails` (
+  `uniqueID` varchar(5) NOT NULL,
+  `name` varchar(80) NOT NULL,
+  `dateJoined` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`uniqueID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `userDetails`
+--
+
+INSERT INTO `userDetails` (`uniqueID`, `name`, `dateJoined`) VALUES
+('C55VB', 'Emmanuel Ngeno', '2013-11-21 06:57:19'),
+('G67BA', 'Administrator', '2013-09-17 21:00:00'),
+('Y6D2K', 'Ibrahim Ngeno', '2013-09-20 14:54:44');
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
