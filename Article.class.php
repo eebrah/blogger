@@ -20,8 +20,8 @@ INSERT INTO `articleDetails` (
 	, `title`
 )
 VALUES (
-	  "' . mysql_escape_string( $this -> getUniqueID() ) . '"
-	, "' . mysql_escape_string( $this -> getTitle() ) . '"
+	  "' . mysql_real_escape_string( $this -> getUniqueID() ) . '"
+	, "' . mysql_real_escape_string( $this -> getTitle() ) . '"
 )';
 	
 		switch( $returnType ) {
@@ -78,7 +78,7 @@ SELECT
 FROM
 	`articleDetails`
 WHERE
-	`uniqueID` = "' . mysql_escape_string( $this -> getUniqueID() ) . '"';
+	`uniqueID` = "' . mysql_real_escape_string( $this -> getUniqueID() ) . '"';
 	
 		switch( $returnType ) {
 			
@@ -128,7 +128,7 @@ WHERE
 UPDATE
 	`articleDetails`
 SET
-	`title` = "' . mysql_escape_string( $this -> getTitle() ) . '"
+	`title` = "' . mysql_real_escape_string( $this -> getTitle() ) . '"
 WHERE
 	`uniqueID` = "' . $this -> getUniqueID() . '"';
 		
