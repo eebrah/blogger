@@ -183,6 +183,129 @@ WHERE
 
 }
 
+function getArticles( $returnType = 0, $filter = "all" ) {
+
+	GLOBAL $dbh;
+
+	$query = '
+SELECT
+	`uniqueID`
+FROM
+	`articleDetails`
+WHERE';
+
+	if( $filter == "all" ) {
+
+		$query .= '
+	1';
+
+	}
+	else {
+
+		// more to come?
+
+	}
+
+	switch( $returnType ) {
+
+		case "0" : {
+
+			$returnValue = Array();
+
+			try {
+
+				$statement = $dbh -> prepare( $query );
+				$statement -> execute();
+
+				$results = $statement -> fetchAll();
+
+				foreach( $results as $result ) {
+
+					array_push( $returnValue, $result[ "uniqueID" ] );
+
+				}
+
+			}
+			catch( PDOException $e ) {
+
+			   print "Error!: " . $e -> getMessage() . "<br/>";
+			   die();
+
+			}
+
+
+		}
+		break;
+
+		case "1" : {
+
+			$returnValue = $query;
+
+		}
+		break;
+
+	}
+
+	return $returnValue;
+
+}
+
+function articleExists( $returnType = 0, $articleID ) {
+
+	GLOBAL $dbh;
+
+	$query = '
+SELECT
+	`uniqueID`
+FROM
+	`articleDetails`
+WHERE
+	`uniqueID` = "' . $articleID . '"';
+
+	switch( $returnType ) {
+
+		case "0" :
+		default : {
+
+			$returnValue = true;
+
+			try {
+
+				$statement = $dbh -> prepare( $query );
+				$statement -> execute();
+
+				$results = $statement -> fetchAll();
+
+				if( count( $results ) > 0 ) {
+
+					$returnValue = true;
+
+				}
+
+			}
+			catch( PDOException $e ) {
+
+			   print "Error!: " . $e -> getMessage() . "<br/>";
+			   die();
+
+			}
+
+
+		}
+		break;
+
+		case "1" : {
+
+			$returnValue = $query;
+
+		}
+		break;
+
+	}
+
+	return $returnValue;
+
+}
 
 
 ?>

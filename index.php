@@ -68,15 +68,15 @@ switch( $section ) {
 	
 	case "home" : {
 		
-		$article = new Article( "DTMIU" );
+		$article = new Article( "00000", "this is just a test", "title" );
 		
-//		if( $article -> saveToDB() ) {
+		if( $article -> saveToDB() ) {
 			
 			$pageContent .= '
 <p>' . $article -> getUniqueID() . '</p>
 <h1>' . $article -> getTitle() . '</h1>
 ' . Markdown( $article -> getBody() );
-/*		
+		
 		}
 		else {
 			
@@ -84,7 +84,7 @@ switch( $section ) {
 <p>Sorry, no save :(</p>';
 		
 		}
-*/	
+
 	}
 	break;
 	
