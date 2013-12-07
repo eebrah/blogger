@@ -52,11 +52,11 @@ $pageFooter = '</div>
 	</body>
 </html>';
 
-$pageContent = '';
+$pageBody = '';
 
 }
 
-$section = "home";
+$section = "articles";
 
 if( isset( $_REQUEST[ "section" ] ) ) {
 	
@@ -66,22 +66,51 @@ if( isset( $_REQUEST[ "section" ] ) ) {
 
 switch( $section ) {
 	
-	case "home" : {
+	case "home" : {}
+	break;
+	
+	case "articles" : {
 		
-		$article = new Article( "00000", "this is just a test", "title" );
+		$articles = getArticles();
 		
-		if( $article -> saveToDB() ) {
+		if( count( $articles ) > 0 ) {
 			
-			$pageContent .= '
-<p>' . $article -> getUniqueID() . '</p>
-<h1>' . $article -> getTitle() . '</h1>
-' . Markdown( $article -> getBody() );
+			$count = 5;
+			
+			if( count( $articles ) <= 5 ) {
+			
+				$limit = count( $articles );
+			
+			}
+			
+			for( $i = 0; $i < $limit; $i++ ) {
 		
+				$article = new Article( $articles[ $i ] );
+				
+				if( articleExists( 0, $articles[ $i ] ) ) {
+					
+					$pageBody .= '
+<div class="article">
+	<h1>' . $article -> getTitle() . '</h1>
+' . Markdown( $article -> getBody() ) . '</div>';
+		
+				}
+				else {
+					
+					$pageBody .= '
+<p>Sorry, the article referenced no longer exists</p>';
+		
+				}
+				
+			}
+			
 		}
 		else {
 			
-			$pageContent .= '
-<p>Sorry, no save :(</p>';
+			$pageBody .= '
+<div class="dialog">
+	<p> no posts yet :( </p>
+</div>';
 		
 		}
 
@@ -106,7 +135,7 @@ switch( $section ) {
 				
 				if( count( $articles ) > 0 ) {
 				
-					$pageContent .= '
+					$pageBody .= '
 <div>
 	<table>
 		<thead>
@@ -125,7 +154,7 @@ switch( $section ) {
 							
 							$article = new Article( $articleID );
 				
-							$pageContent .= '
+							$pageBody .= '
 			<tr>
 				<td>' . $count . '</td>
 				<td>' . $article -> getDateCreated() . '</td>
@@ -144,7 +173,7 @@ switch( $section ) {
 			
 					}
 			
-					$pageContent .= '
+					$pageBody .= '
 		</tbody>
 	</table>
 </div>';
@@ -152,7 +181,7 @@ switch( $section ) {
 				}
 				else {
 					
-					$pageContent .= '
+					$pageBody .= '
 <div class="dialog">
 	<p>You have no articles</p>
 </div>';
@@ -168,7 +197,7 @@ switch( $section ) {
 					
 					$article = new Article( $_REQUEST[ "target" ] );
 					
-					$pageContent .= '
+					$pageBody .= '
 <div class="article">
 	<h1>' . $article -> getTitle() . '</h1>
 	' . Markdown( $article -> getBody ) . '
@@ -177,7 +206,7 @@ switch( $section ) {
 				}
 				else {
 					
-					$pageContent .= '
+					$pageBody .= '
 <div class="dialog">
 	<p>you have to specify an article to view</p>
 </div>';
@@ -206,14 +235,14 @@ switch( $format ) {
 	
 	case "html" : {
 		
-		$output = $pageHeader . $pageContent . $pageFooter;
+		$output = $pageHeader . $pageBody . $pageFooter;
 	
 	}
 	break;
 	
 	case "ajax" : {
 		
-		$output = $pageContent;
+		$output = $pageBody;
 	
 	}
 	break;
