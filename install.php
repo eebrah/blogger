@@ -19,10 +19,12 @@ function remove_install_tree($dir) {
 
 if ( isset($_POST['mysql-root-user']) && ($_POST['mysql-root-user'] !== "") ) {
 	if ( isset($_POST['mysql-root-pass']) && ($_POST['mysql-root-pass'] !== "") ) {
+
+		$root_user = $_POST['mysql-root-user'];
+		$root_pass = $_POST['mysql-root-pass'];		
+		
 		try {
-			$root_user = mysql_real_escape_string($_POST['mysql-root-user']);
-			$root_pass = mysql_real_escape_string($_POST['mysql-root-pass']);
-			
+
 			$conn = new PDO('mysql:host='.$DBHost.';', $root_user, $root_pass, array(PDO::ATTR_PERSISTENT=>true));
 			$conn->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 			
@@ -30,9 +32,13 @@ if ( isset($_POST['mysql-root-user']) && ($_POST['mysql-root-user'] !== "") ) {
 			$installer->setRootPass($root_pass);
 			$installer->setDBConn($conn);
 			$installer->run();
+			
 			remove_install_tree("install");
 			header("Location: index.php");
-		} catch ( \PDOException $pdoe ) {
+			
+		} 
+		catch ( \PDOException $pdoe ) {
+			
 			$exception_msg = substr($pdoe->getMessage(), 23, 13);
 			if($exception_msg==="Access denied") {
 				$installer->remove_invalid_data_errors();

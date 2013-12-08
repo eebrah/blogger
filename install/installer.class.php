@@ -39,6 +39,7 @@ class Installer {
 	public function render() {
 		if( isset($_SESSION['db_created']) && ($_SESSION['db_created']==="true") ) {
 			$this->remove_form();
+			unset($_SESSION['db_created']);
 		} else {
 			$this->remove_db_installed_msg();
 			$this->setup_form();

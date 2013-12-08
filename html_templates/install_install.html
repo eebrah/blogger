@@ -3,32 +3,46 @@
 	<head>
 		<meta charset="utf-8" />
 		<title>Install The CMS</title>
+		<link rel="stylesheet" 
+		      type="text/css" 
+		      href="./styles/main.css.php" /> 
 	</head>
-	
 	<body>
-		<h1>The CMS Installer</h1>
-		<p>Hi there. Thank you for choosing our platform for use as your CMS.</p>
-		<p>Let's get you installing before you realize we are fugly!
-		Just fill in the details below and we'll do the rest</p>
-		
-		<p class="important"><strong>NOTE: </strong>Running the install will delete any existing database with the same name. Proceed carefully!!!</p>
-		
-		<form id="installer-form" action="#" method="POST">
-			<fieldset>
-				<legend>Mysql Root</legend>
-				<p>Please enter the details for mysql root user</p>
-				<label for="mysql-root-user">Root Username</label>
-				<input id="mysql-root-user" type="text" name="mysql-root-user" />
-				<span class="error" id="root-user-err" style="">Please enter a valid username</span>
-				<span class="error" id="access-denied-err" style="">Access Denied: Wrong username or password</span>
-				<label for="mysql-root-pass">Root Username</label>
-				<input id="mysql-root-pass" type="password" name="mysql-root-pass" />
-				<span class="error" id="root-pass-err" style="">Please enter a valid password</span>
-			</fieldset>
-			<input type="submit" value="Install" />
-		</form>
-		<div id="db-installed-msg">
-			<p>I have successfully installed the database, but I was unable to delete the install directory. Please delete, or rename the install directory for me.</p>
+		<div class="wrapper">
+			<div class="header"></div>
+			<div class="body">
+				<h1>The CMS Installer</h1>
+				<p>Hi there. Thank you for choosing our platform for use as your CMS.</p>
+				<p>Let's get you installing before you realize we are fugly!
+				Just fill in the details below and we'll do the rest</p>
+				
+				<p class="important"><strong>NOTE: </strong>Running the install will delete any existing database with the same name. Proceed carefully!!!</p>
+				<div class="dialog">
+					<form id="installer-form" action="#" method="POST">
+						<fieldset class="info">
+							<legend>DB admin credentials</legend>
+							<div class="row">
+								<label for="mysql-root-user">username</label>
+								<input id="mysql-root-user" type="text" name="mysql-root-user" />
+								<span class="error" id="root-user-err" style="">Please enter a valid username</span>
+								<span class="error" id="access-denied-err" style="">Access Denied: Wrong username or password</span>
+							</div>
+							<div class="row">
+								<label for="mysql-root-pass">password</label>
+								<input id="mysql-root-pass" type="password" name="mysql-root-pass" />
+								<span class="error" id="root-pass-err" style="">Please enter a valid password</span>
+							</div>
+						</fieldset>
+						<fieldset class="buttons">
+							<button type="reset">reset</button>
+							<button type="submit">install</button>
+						</fieldset>
+					</form>
+				</div>
+				<div id="db-installed-msg">
+					<p>I have successfully installed the database, but I was unable to delete the install directory. Please delete, or rename the install directory for me.</p>
+				</div>
+			</div>
 		</div>
 	</body>
 </html>
