@@ -39,8 +39,8 @@ INSERT INTO `postDetails` (
 	, `body`
 )
 VALUES (
-	  "' . mysql_escape_string( $this -> getUniqueID() ) . '"
-	, "' . mysql_escape_string( $this -> getBody() ) . '"
+	  "' . mysql_real_escape_string( $this -> getUniqueID() ) . '"
+	, "' . mysql_real_escape_string( $this -> getBody() ) . '"
 )';
 	
 		switch( $returnType ) {
@@ -95,7 +95,7 @@ SELECT
 FROM
 	`postDetails`
 WHERE
-	`uniqueID` = "' . mysql_escape_string( $this -> getUniqueID() ) . '"';
+	`uniqueID` = "' . mysql_real_escape_string( $this -> getUniqueID() ) . '"';
 	
 		switch( $returnType ) {
 			
@@ -147,9 +147,9 @@ WHERE
 UPDATE
 	`postDetails`
 SET
-	  `body` = "' . mysql_escape_string( $this -> getBody() ) . '"
-	, `dateCreated` = "' . mysql_escape_string( $this -> getDateCreated() ) . '"
-	, `datePublished` = "' . mysql_escape_string( $this -> getDatePublished() ) . '"
+	  `body` = "' . mysql_real_escape_string( $this -> getBody() ) . '"
+	, `dateCreated` = "' . mysql_real_escape_string( $this -> getDateCreated() ) . '"
+	, `datePublished` = "' . mysql_real_escape_string( $this -> getDatePublished() ) . '"
 WHERE
 	`uniqueID` = "' . $this -> getUniqueID() . '"';
 		

@@ -19,6 +19,11 @@ require_once( "./markdown.php" );
 
 session_start();
 
+/** Install the app if necessary **/
+if ( file_exists("install") ) {
+	header("Location: install.php");
+}
+
 { // page building variables
 
 $url = 'ibrahimngeno.me.ke';					// set to your sites URL
