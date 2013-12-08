@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Dec 07, 2013 at 05:33 AM
+-- Generation Time: Dec 08, 2013 at 04:27 AM
 -- Server version: 5.5.33a-MariaDB
 -- PHP Version: 5.5.6
 
@@ -36,15 +36,6 @@ CREATE TABLE IF NOT EXISTS `accountDetails` (
   PRIMARY KEY (`uniqueID`),
   UNIQUE KEY `screenname` (`screenname`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `accountDetails`
---
-
-INSERT INTO `accountDetails` (`uniqueID`, `screenname`, `email`, `password`, `status`, `accessLevel`) VALUES
-('C55VB', 'manuel', 'kipronosoi@gmail.com', '5f4dcc3b5aa765d61d8327deb882cf99', 1, 2),
-('G67BA', 'admin', 'admin@ibrahimngeno.me.ke', '020763de46dfb2a37001c0f129b61104', 1, 0),
-('Y6D2K', 'eebrah', 'eebrah@gmail.com', '5f4dcc3b5aa765d61d8327deb882cf99', 1, 2);
 
 -- --------------------------------------------------------
 
@@ -83,6 +74,7 @@ CREATE TABLE IF NOT EXISTS `postDetails` (
   `dateCreated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `datePublished` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `author` varchar(5) NOT NULL DEFAULT '00000',
+  `status` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`uniqueID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -98,15 +90,6 @@ CREATE TABLE IF NOT EXISTS `userDetails` (
   `dateJoined` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`uniqueID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `userDetails`
---
-
-INSERT INTO `userDetails` (`uniqueID`, `name`, `dateJoined`) VALUES
-('C55VB', 'Emmanuel Ngeno', '2013-11-21 06:57:19'),
-('G67BA', 'Administrator', '2013-09-17 21:00:00'),
-('Y6D2K', 'Ibrahim Ngeno', '2013-09-20 14:54:44');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
