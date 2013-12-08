@@ -1,0 +1,3 @@
+[submodule "libs/DOMTemplate"]
+	path = libs/DOMTemplate
+	url = git://github.com/fredmanglis/DOMTemplate.git
