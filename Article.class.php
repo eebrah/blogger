@@ -136,6 +136,8 @@ WHERE
 		
 			$returnValue = false;
 			
+			parent::updateDB();
+			
 			try {
 
 				$statement = $dbh -> prepare( $query );

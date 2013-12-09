@@ -75,13 +75,15 @@ if( isset( $_REQUEST[ "section" ] ) ) {
 if( isset( $_SESSION[ "blog" ][ "admin" ][ "loggedIn" ] ) ) {
 
 	$currentUser = new User( $_SESSION[ "blog" ][ "admin" ][ "loggedIn" ] );
+	
+	$articles = getArticles( 0 );
 
 {
 	$pageBody .= '
 				<div class="sideColumn">
 					<ul>
 						<li>
-							<a href="?section=articles">articles</a>
+							<a href="?section=articles">articles <sup>' . count( $articles ) . '</sup></a>
 							<ul>
 								<li>
 									<a href="?section=articles&amp;action=list">list articles</a>
