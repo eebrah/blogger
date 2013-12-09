@@ -456,6 +456,9 @@ if( isset( $_SESSION[ "blog" ][ "admin" ][ "loggedIn" ] ) ) {
 			  method="post">
 			<fieldset class="info">
 				<legend>article info</legend>
+				<input type="hidden"
+				       name="target"
+					   value="' . $_REQUEST[ "target" ] . '" />
 				<div class="row">
 					<label>title</label>
 					<input type="text"
