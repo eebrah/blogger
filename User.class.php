@@ -53,11 +53,11 @@ VALUES (
 
 				$returnValue = false;
 
-				parent::saveToDB();
-
 				try {
 
 					$dbh -> beginTransaction();
+
+						$dbh -> exec( parent::saveToDB( 1 ) );
 
 						$dbh -> exec( $query );
 
@@ -151,14 +151,11 @@ WHERE
 
 		GLOBAL $dbh;
 
-		$parentQuery = parent::updateDB( 1 );
-
 		$query = '
 UPDATE
 	`userDetails`
 SET
-	  `name` = "' . $this -> getName() . '"
-	, `dateJoined` = "' . $this -> getDateJoined() . '"
+	`name` = "' . $this -> getName() . '"
 WHERE
 	`uniqueID` = "' . $this -> getUniqueID() . '"';
 
@@ -171,7 +168,7 @@ WHERE
 
 				try {
 
-					$statement = $dbh -> prepare( $parentQuery );
+					$statement = $dbh -> prepare( parent::updateDB( 1 ) );
 					$statement -> execute();
 
 					$statement = $dbh -> prepare( $query );
@@ -207,9 +204,10 @@ WHERE
 	                      $screenName = "",
 	                      $password = "",
 	                      $email = "",
+	                      $accessLevel = 2,
 	                      $name = "" ) {
 
-		parent::__construct( $uniqueID, $screenName, $password, $email );
+		parent::__construct( $uniqueID, $screenName, $password, $email, $accessLevel );
 
 		if( $uniqueID == "00000" ) {
 

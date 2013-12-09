@@ -9,6 +9,7 @@ Class Account extends Base {
 
 	private $email;
 
+	private $accessLevel = 2;
 	private $status = false;
 
 	function setScreenName( $screenName ) {
@@ -59,6 +60,18 @@ Class Account extends Base {
 
 	}
 
+	function setAccessLevel( $accessLevel ) {
+
+		$this -> accessLevel = $accessLevel;
+
+	}
+
+	function getAccessLevel() {
+
+		return $this -> accessLevel;
+
+	}
+
 	function saveToDB( $returnType = 0 ) {
 
 		GLOBAL $dbh;
@@ -69,12 +82,14 @@ INSERT INTO `accountDetails` (
 	, `screenName`
 	, `password`
 	, `email`
+	, `accessLevel` 
 )
 VALUES (
 	  "' . $this -> getUniqueID() . '"
 	, "' . $this -> getScreenName() . '"
 	, "' . hash( "md5", $this -> getPassword() ) . '"
 	, "' . $this -> getEmail() . '"
+	, "' . $this -> getAccessLevel() . '"
 )';
 
 		switch( $returnType ) {
@@ -128,6 +143,7 @@ SELECT
 	, `password`
 	, `status`
 	, `email`
+	, `accessLevel`
 FROM
 	`accountDetails`
 WHERE
@@ -151,6 +167,7 @@ WHERE
 					$this -> setPassword( $row[ "password" ] );
 					$this -> setStatus( $row[ "status" ] );
 					$this -> setEmail( $row[ "email" ] );
+					$this -> setAccessLevel( $row[ "accessLevel" ] );
 
 					$returnValue = true;
 
@@ -190,6 +207,7 @@ SET
 	, `password` = "' .  $this -> getPassword() . '"
 	, `status` = "' .  $this -> getStatus() . '"
 	, `email` = "' . $this -> getEmail() . '"
+	, `accessLevel` = "' . $this -> getAccessLevel() . '"
 WHERE
 	`uniqueID` = "' .  $this -> getUniqueID() . '"';
 
@@ -234,7 +252,8 @@ WHERE
 	function __construct( $uniqueID = "00000",
 	                      $screenName = "",
 	                      $password = "",
-	                      $email = "" ) {
+	                      $email = "",
+	                      $accessLevel = 2 ) {
 
 		parent::__construct( $uniqueID );
 
@@ -257,6 +276,8 @@ WHERE
 				$this -> setEmail( $email );
 
 			}
+			
+			$this -> setAccessLevel( $accessLevel );
 
 		}
 		else {

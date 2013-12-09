@@ -2,7 +2,7 @@
 
 require_once("../Constants.php");
 require_once("../libs/DOMTemplate/domtemplate.php");
-require_once("administrative_user.class.php");
+require_once("../User.class.php");
 
 class AdminCreator {
 	private $html_file = "/create_admin.html";
@@ -31,7 +31,7 @@ class AdminCreator {
 	public function run() {
 		GLOBAL $dbh;
 		
-		$admin = new AdministrativeUser("00000", $this->username, $this->password, $this->email);
+		$admin = new User("00000", $this->username, $this->password, $this->email, 0);
 		if($admin->saveToDB()) {
 			header("Location: ./index.php");
 		} else {

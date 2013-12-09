@@ -11,7 +11,7 @@ else {
 
 }
 
-require_once( "../User.class.php" );
+require_once( "../Admin.class.php" );
 require_once( "../Token.class.php" );
 require_once( "../Article.class.php" );
 require_once( "../Comment.class.php" );
@@ -83,7 +83,7 @@ if( isset( $_SESSION[ "blog" ][ "admin" ][ "loggedIn" ] ) ) {
 				<div class="sideColumn">
 					<ul>
 						<li>
-							<a href="?section=articles">articles <sup>' . count( $articles ) . '</sup></a>
+							<a href="?section=articles">articles <sup>[ ' . count( $articles ) . ' ]</sup></a>
 							<ul>
 								<li>
 									<a href="?section=articles&amp;action=list">list articles</a>
@@ -228,7 +228,25 @@ if( isset( $_SESSION[ "blog" ][ "admin" ][ "loggedIn" ] ) ) {
 
 					if( isset( $_POST[ "name" ] ) && isset( $_POST[ "screenName" ] ) ) {
 
-						//Process the data
+						$currentUser -> setScreenName( $_POST[ "screenName" ] );
+						$currentUser -> setName( $_POST[ "name" ] );
+						
+						if( $currentUser -> updateDB() ) {
+							
+							$pageBody .= '
+<div class="message">
+	<p>your details have been updated</p>
+</div>';
+						
+						}
+						else {
+							
+							$pageBody .= '
+<div class="message">
+	<p>Could not update your details</p>
+</div>';
+						
+						}
 
 					}
 					else {
@@ -252,7 +270,6 @@ if( isset( $_SESSION[ "blog" ][ "admin" ][ "loggedIn" ] ) ) {
 				<input type="text"
 				       name="name"
 				       value="' . $currentUser -> getName() . '"
-				       pattern="^[a-zA-Z][a-zA-Z0-9-_\.]{3,80}$"
 				       title="must be between 3 and 20 characters long, acn only contain letters" />
 			</div><!--
 			<div class="row">
