@@ -162,6 +162,11 @@ body {
 			text-align: right;
 
 		}
+		
+		ul.actions li {
+			display: inline;
+		
+		}
 
 	div.dialog {
 

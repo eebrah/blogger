@@ -316,19 +316,19 @@ if( isset( $_SESSION[ "blog" ][ "admin" ][ "loggedIn" ] ) ) {
 			</thead>
 			<tbody>';
 			
-							$count = 1;
+						$count = 1;
 					
-							foreach( $articles as $articleID ) {
+						foreach( $articles as $articleID ) {
 								
-								$article = new Article( $articleID );
+							$article = new Article( $articleID );
 					
-								$pageBody .= '
+							$pageBody .= '
 				<tr>
 					<td>' . $count . '</td>
 					<td>' . $article -> getDateCreated() . '</td>
 					<td>' . substr( $article -> getTitle(), 0, 30 ) . ' ...</td>
 					<td>
-						<ul>
+						<ul class="actions">
 							<li>
 								<a href="?section=articles&amp;action=view&amp;target=' . $articleID . '">view</a>
 							</li>
@@ -338,6 +338,8 @@ if( isset( $_SESSION[ "blog" ][ "admin" ][ "loggedIn" ] ) ) {
 						</ul>
 					</td>
 				</tr>';
+					
+							$count++;
 				
 						}
 				
