@@ -11,18 +11,18 @@ else {
 
 }
 
+session_start();
+
+/** Install the app if necessary **/
+if ( file_exists("install") ) {
+	header("Location: install/install.php");
+}
+
 require_once( "./User.class.php" );
 require_once( "./Token.class.php" );
 require_once( "./Article.class.php" );
 
 require_once( "./markdown.php" );
-
-session_start();
-
-/** Install the app if necessary **/
-if ( file_exists("install") ) {
-	header("Location: install.php");
-}
 
 { // page building variables
 
