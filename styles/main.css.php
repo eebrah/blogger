@@ -55,7 +55,16 @@ body {
 			position: fixed;
 
 			height: 100%;
+			
+			left: -17em;
+			
+			transition: left 1s;
 
+		}
+		
+		div.sideColumn:hover {
+			left: 0;
+		
 		}
 
 		div.sideColumn a {
@@ -85,7 +94,7 @@ body {
 
 		div.mainColumn {
 			min-width: 640px;
-			width: calc( 100% - ( 20em + ( 2 * 4em ) ) );
+			width: calc( 100% - (  ( 2 * 4em ) ) );
 
 			min-height: 20em;
 			background-color: white;
@@ -94,7 +103,7 @@ body {
 
 			padding: 2em;
 
-			margin-left: 20em;
+			margin-left: 3em;
 
 		}
 
