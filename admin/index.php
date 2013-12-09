@@ -798,6 +798,30 @@ AND
 
 					}
 					else {
+						$query = '
+SELECT
+	`uniqueID`
+FROM
+	`accountDetails`
+WHERE
+	`status` = "1"
+AND
+	`accessLevel` = "0"
+';
+						try {
+							if( $result = $dbh -> query( $query ) ) {
+								$results = $result -> fetchAll();
+								if( count( $results ) == 0 ) {
+									/** No Administrator - Create one **/
+									header("Location: create_admin.php");
+								}
+
+							}
+						}
+						catch( PDOException $e ) {
+							print "Error!: " . $e -> getMessage() . "<br/>";
+							die();
+						}
 
 						$pageBody .= '
 <div class="dialog" style="width: 30em; margin: 5em auto;">

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Create Administrator</title>
+		<link rel="stylesheet" 
+		      type="text/css" 
+		      href="../styles/main.css.php" /> 
+	</head>
+	<body>
+		<div class="wrapper">
+			<div class="header"></div>
+			<div class="body">
+				<h1>Create Administrator</h1>
+				<div id="create-admin-msg">
+					<p>It seems like we do not have a CMS administrator - now, let us create one.</p>
+				</div>
+				<div class="dialog">
+					<form id="cms-admin-form" action="#" method="POST">
+						<fieldset class="info">
+							<legend>CMS Admin Credentials</legend>
+							<div class="row">
+								<label for="cms-admin-user">Username</label>
+								<input id="cms-admin-user" type="text" value="" name="cms-admin-user" />
+								<span class="error" id="admin-user-err" style="">Please choose a username</span>
+							</div>
+							<div class="row">
+								<label for="cms-admin-email">Email</label>
+								<input id="cms-admin-email" type="email" value="" name="cms-admin-email" />
+								<span class="error" id="admin-email-err" style="">Please enter your email</span>
+								<span class="error" id="admin-invalid-email-err" style="">Please enter a valid email</span>
+							</div>
+							<div class="row">
+								<label for="cms-admin-pass">Password</label>
+								<input id="cms-admin-pass" type="password" name="cms-admin-pass" />
+								<span class="error" id="admin-pass-err" style="">You must choose a password</span>
+							</div>
+							<div class="row">
+								<label for="cms-admin-conf-pass">Confirm Password</label>
+								<input id="cms-admin-conf-pass" type="password" name="cms-admin-conf-pass" />
+								<span class="error" id="admin-conf-pass-err" style="">Passwords do not match</span>
+							</div>
+						</fieldset>
+						<fieldset class="buttons">
+							<button type="reset">reset</button>
+							<button type="submit">Create</button>
+						</fieldset>
+					</form>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

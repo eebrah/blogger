@@ -1,7 +1,8 @@
 <?php
-require_once("Constants.php");
-require_once("DBConfig.php");
-require_once("install/installer.class.php");
+require_once("../Constants.php");
+require_once("../DBConfig.php");
+require_once("installer.class.php");
+
 
 $installer = new Installer();
 
@@ -34,7 +35,7 @@ if ( isset($_POST['mysql-root-user']) && ($_POST['mysql-root-user'] !== "") ) {
 			$installer->run();
 			
 			remove_install_tree("install");
-			header("Location: index.php");
+			header("Location: ../index.php");
 			
 		} 
 		catch ( \PDOException $pdoe ) {

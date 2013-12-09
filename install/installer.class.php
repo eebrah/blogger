@@ -1,9 +1,8 @@
 <?php
 
-require_once("Base.class.php");
-require_once("Constants.php");
-require_once("DBConfig.php");
-require_once("libs/DOMTemplate/domtemplate.php");
+require_once("../Constants.php");
+require_once("../DBConfig.php");
+require_once("../libs/DOMTemplate/domtemplate.php");
 
 
 class Installer {
@@ -20,8 +19,8 @@ class Installer {
 	
 	public function __construct() {
 		@session_start();
-		$this->template = DOMTemplate::fromFile(Constants::HTML_TEMPLATES_DIR.$this->html_file);
-		$this->db_structure_sql = file_get_contents("install/blog.sql");
+		$this->template = DOMTemplate::fromFile("../".Constants::HTML_TEMPLATES_DIR.$this->html_file);
+		$this->db_structure_sql = file_get_contents("blog_sanitised.sql");
 	}
 	
 	public function setRootPass($root_pass) {
@@ -49,7 +48,6 @@ class Installer {
 	
 	
 	public function run() {
-		GLOBAL $dbh;
 		GLOBAL $DBName;
 		GLOBAL $DBUser;
 		GLOBAL $DBHost;
@@ -57,16 +55,16 @@ class Installer {
 		
 		$drop_sql = "DROP DATABASE IF EXISTS {$DBName}";
 		$create_sql = "CREATE DATABASE {$DBName}";
+		$use_db_sql = "USE {$DBName}";
 		$user_sql = "GRANT ALL ON {$DBName}.* TO `{$DBUser}`@`{$DBHost}` IDENTIFIED BY '{$DBPass}'";
 		$this->db_conn->beginTransaction();
 			$this->db_conn->exec($drop_sql);
 			$this->db_conn->exec($create_sql);
 			$this->db_conn->exec($user_sql);
+			$this->db_conn->exec($use_db_sql);
+			$this->db_conn->exec($this->db_structure_sql);
 		$this->db_conn->commit();
 		
-		$dbh->beginTransaction();
-			$dbh->exec($this->db_structure_sql);
-		$dbh->commit();
 		$_SESSION['db_created']="true";
 	}
 	
