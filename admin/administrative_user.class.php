@@ -1,19 +1,14 @@
 <?php
 
-require_once("../Account.class.php");
+require_once("../User.class.php");
 
-class AdministrativeUser extends Account {
+class AdministrativeUser extends User {
 	private $access_level = 0;
-	private $email;
-	
-	public function getEmail() {
-		return $this->email;
-	}
 	
 	function saveToDB( $returnType = 0 ) {
 		GLOBAL $dbh;
 		
-		$query = 'INSERT INTO `accountDetails` (
+		$query_account = 'INSERT INTO `accountDetails` (
 			`uniqueID`, `screenName`, `password`, `email`, `accessLevel`
 			) VALUES ("'
 				.$this -> getUniqueID() . '", "'
@@ -21,6 +16,12 @@ class AdministrativeUser extends Account {
 				.hash( "md5", $this -> getPassword() ) . '", "'
 				.$this -> getEmail() . '", "'
 				.$this->access_level .'")';
+		
+		$query_user = 'INSERT INTO `userDetails` (
+			`uniqueID` , `name`
+			) VALUES ("'
+				.$this -> getUniqueID() . '", "'
+				.$this -> getName() . '")';
 
 		switch( $returnType ) {
 			case "0" :
@@ -30,7 +31,8 @@ class AdministrativeUser extends Account {
 
 				try {
 					$dbh -> beginTransaction();
-						$dbh -> exec( $query );
+						$dbh -> exec( $query_account );
+						$dbh -> exec( $query_user );
 					$dbh -> commit();
 
 					$returnValue = true;
@@ -53,7 +55,6 @@ class AdministrativeUser extends Account {
 	
 	function __construct( $uniqueID = "00000", $screenName = "",
 		$password = "", $email = "" ) {
-			$this->email = $email;
 			parent::__construct($uniqueID, $screenName, $password, $email);
 	}
 }
