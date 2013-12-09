@@ -40,19 +40,31 @@ if ( isset($_POST['mysql-root-user']) && ($_POST['mysql-root-user'] !== "") ) {
 		catch ( \PDOException $pdoe ) {
 			
 			$exception_msg = substr($pdoe->getMessage(), 23, 13);
-			if($exception_msg==="Access denied") {
-				$installer->remove_invalid_data_errors();
-				$installer->render();
+			
+			if( $exception_msg === "Access denied" ) {
+				
+				$installer -> remove_invalid_data_errors();
+				$installer -> render();
+				
 			} else {
+				
 				print "Error[ 101 ]: " . $pdoe -> getMessage();
 				die();
+				
 			}
+			
 		}
+		
 	} else {
+		
 		$installer->render();
+		
 	}
+	
 } else {
+	
 	$installer->remove_all_errors();
 	$installer->render();
+	
 }
 ?>
