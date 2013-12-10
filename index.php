@@ -2,21 +2,12 @@
 
 // This bit ensures that all output is GZip compressed, saving bandwidth
 
-if( substr_count( $_SERVER[ 'HTTP_ACCEPT_ENCODING' ], 'gzip' ) ) {
-	ob_start( "ob_gzhandler" );
-
-}
-else {
-	ob_start();
-
-}
+if( substr_count( $_SERVER[ 'HTTP_ACCEPT_ENCODING' ], 'gzip' ) ) { ob_start( "ob_gzhandler" ); } else {	ob_start(); }
 
 session_start();
 
-/** Install the app if necessary **/
-if ( file_exists("install") ) {
-	header("Location: install/install.php");
-}
+/** Install the app if necessary, by checking if the install folder exists and if so installing  **/
+if ( file_exists( "install" ) ) { header( "Location: install/install.php" ); }
 
 require_once( "./User.class.php" );
 require_once( "./Token.class.php" );
@@ -26,9 +17,9 @@ require_once( "./markdown.php" );
 
 { // page building variables
 
-$url = 'ibrahimngeno.me.ke';					// set to your sites URL
+$url = '';						// set to your sites URL, may or may not be usefull
 	
-$adminEmail = "eebrah@gmail.com";				// all "contact site admin" links will point to this
+$adminEmail = "";				// all "contact site admin" links will point to this
 
 $HTMLEmailheaders = 'MIME-Version: 1.0' . "\r\n" .
 					'Content-type: text/html; charset=iso-8859-1' . "\r\n" .
@@ -37,22 +28,26 @@ $HTMLEmailheaders = 'MIME-Version: 1.0' . "\r\n" .
 
 $output = '';
 
-$pageTitle = 'netivity CMS';
+$pageTitle = '';				// set the pages title here
 
 $pageHeader = '<!DOCTYPE html>
 <html>
 	<head>
 		<title>' . $pageTitle . '</title>
+		<link type="text/css"
+		      rel="stylesheet"
+		      href="./styles/blog.css.php">
 	</head>
 	<body>
 		<div class="wrapper">
-			<div class="wrapper">
-				<div class="header"></div>
-				<div class="body">';
+			<div class="header"></div>
+			<div class="body">
+				<div class="sideColumn">';
 				
-$pageFooter = '</div>
-				<div class="footer"></div>
+$pageFooter = '
+				</div>
 			</div>
+			<div class="footer"></div>
 		</div>
 	</body>
 </html>';
@@ -80,7 +75,7 @@ switch( $section ) {
 		
 		if( count( $articles ) > 0 ) {
 			
-			$count = 5;
+			$limit = 5;
 			
 			if( count( $articles ) <= 5 ) {
 			
@@ -227,6 +222,13 @@ switch( $section ) {
 	break;	
 
 }
+
+
+					
+$pageHeader .= '
+					</div>
+					<div class="mainColumn">';
+
 
 $format = 'html';
 
