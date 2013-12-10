@@ -11,7 +11,7 @@ else {
 
 }
 
-require_once( "../Admin.class.php" );
+require_once( "../User.class.php" );
 require_once( "../Token.class.php" );
 require_once( "../Article.class.php" );
 require_once( "../Comment.class.php" );
