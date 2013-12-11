@@ -26,11 +26,13 @@ body {
 	}
 
 	div.header {}
-
+	
 	div.body {
 		width: 100%;
 
 	}
+	
+	
 
 		div.sideColumn {
 			width: 20em;
@@ -261,7 +263,7 @@ fieldset.info div.row:first-of-type {
 fieldset.buttons {
 	text-align: center;
 
-	padding: 1.3em 20%;
+	padding: 1.3em 5%;
 
 	border: none;
 	border-top: 2px solid #122348;;

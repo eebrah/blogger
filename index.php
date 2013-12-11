@@ -185,7 +185,7 @@ switch( $section ) {
 	<form action="?section=comments&amp;action=new"
 	      method="post">
 		<fieldset class="info">
-			<legend>leave a comment</legend>
+			<legend>please leave a comment</legend>
 			<input type="hidden"
 			       name="target"
 			       value="' . $_REQUEST[ "target" ] . '" />
@@ -252,7 +252,7 @@ switch( $section ) {
 				
 				if( isset( $_POST[ "comment" ] ) ) {
 					
-					if( isset( $_POST[ "name" ] ) && isset( $_POST[ "email" ] ) && isset( $_POST[ "target" ] ) ) {
+					if( isset( $_POST[ "name" ] ) && isset( $_POST[ "email" ] ) && isset( $_POST[ "target" ] ) && ( filter_var( $_POST[ "email" ], FILTER_VALIDATE_EMAIL ) ) ) {
 						
 						$comment = new Comment( "00000", $_POST[ "comment" ], $_POST[ "target" ], $_POST[ "name" ], $_POST[ "email" ] );
 						
@@ -278,7 +278,7 @@ switch( $section ) {
 						
 						$pageBody .= '
 <div class="dialog">
-	<p>you must provide your email address and name</p>
+	<p>you must provide a valid email address and a name</p>
 </div>';
 					
 					}

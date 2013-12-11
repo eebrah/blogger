@@ -19,7 +19,7 @@ body {
 	}
 
 	div.wrapper {
-		background-color: white;
+		background-color: inherit;
 
 		max-width: 1000px;
 		
@@ -34,6 +34,11 @@ body {
 		border-radius: 0.2em;
 		
 		margin: 1em 0;
+	
+	}
+
+	div.footer {
+		clear: both;
 	
 	}
 
@@ -109,6 +114,8 @@ body {
 			padding: 0;
 			
 			margin: 0.5em 0;
+			
+			border-radius: 0.2em;
 		
 		}
 		
@@ -215,7 +222,7 @@ fieldset.info div.row:first-of-type {
 fieldset.buttons {
 	text-align: center;
 
-	padding: 1.3em 20%;
+	padding: 1.3em 5%;
 
 	border: none;
 	border-top: 2px solid #122348;;
