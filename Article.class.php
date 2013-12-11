@@ -6,9 +6,23 @@ Class Article extends Post {
 
 	private $title;
 	
+	private $comments = Array();
+	
 	function setTitle( $title ) { $this -> title = $title; }
 	
 	function getTitle() { return $this -> title; }
+	
+	function addComment( $commentID ) { 
+		
+		if( !in_array( $commentID, $this -> comments ) ) {
+		
+			array_push( $this -> comments, $commentID );
+			
+		}
+	
+	}
+	
+	function getComments() { return $this -> comments; }
 	
 	function saveToDB( $returnType = 0 ) {
 		
@@ -80,6 +94,14 @@ FROM
 WHERE
 	`uniqueID` = "' .  $this -> getUniqueID() . '"';
 	
+		$queryComments = '
+SELECT
+	`uniqueID`
+FROM
+	`commentDetails`
+WHERE
+	`article` = "' . $this -> getUniqueID() . '"';
+	
 		switch( $returnType ) {
 			
 			case "0" : {
@@ -94,6 +116,17 @@ WHERE
 					$row = $statement -> fetch();
 					
 					$this -> setTitle( $row[ "title" ] );
+					
+					$statement = $dbh -> prepare( $queryComments );
+					$statement -> execute();
+
+					$results = $statement -> fetchAll( PDO::FETCH_ASSOC );
+
+					foreach( $results as $result ) {
+
+						$this -> addComment( $result[ "uniqueID" ] );
+
+					}					
 					
 					$returnValue = true;
 					

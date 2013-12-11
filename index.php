@@ -12,6 +12,7 @@ if ( file_exists( "install" ) ) { header( "Location: install/install.php" ); }
 require_once( "./User.class.php" );
 require_once( "./Token.class.php" );
 require_once( "./Article.class.php" );
+require_once( "./Comment.class.php" );
 
 require_once( "./markdown.php" );
 
@@ -160,9 +161,32 @@ switch( $section ) {
 	<h1>' . $article -> getTitle() . '</h1>
 	' . Markdown( $article -> getBody() ) . '
 </div>
-<div class="">
-	<form action="">
+<div class="comments">';
+
+					if( count( $article -> getComments() ) > 0 ) {
+	
+						foreach( $article -> getComments() as $commentID ) {
+						
+							$comment = new Comment( $commentID );
+
+							$pageBody .= '
+	<div class="comment">
+		' . Markdown( $comment -> getBody() ) . '
+	</div>';
+	
+						}
+						
+					}
+
+					$pageBody .= '
+</div>
+<div class="commentForm">
+	<form action="?section=comments&amp;action=new"
+	      method="post">
 		<fieldset class="info">
+			<input type="hidden"
+			       name="target"
+			       value="' . $_REQUEST[ "target" ] . '" />
 			<div class="row">
 				<textarea name="comment"
 				          placeholder="your comment here"></textarea>
@@ -206,6 +230,73 @@ switch( $section ) {
 		}
 	
 	} 
+	break;
+	
+	case "comments" : {
+		
+		$action = "add";
+		
+		if( isset( $_REQUEST[ "action" ] ) ) {
+			
+			$action = $_REQUEST[ "action" ];
+		
+		}
+		
+		switch( $action ) {
+			
+			case "add" :
+			case "new" :
+			default : {
+				
+				if( isset( $_POST[ "comment" ] ) ) {
+					
+					if( isset( $_POST[ "name" ] ) && isset( $_POST[ "email" ] ) && isset( $_POST[ "target" ] ) ) {
+						
+						$comment = new Comment( "00000", $_POST[ "comment" ], $_POST[ "target" ] );
+						
+						if( $comment -> saveToDB() ) {
+							
+							$pageBody .= '
+<div class="dialog">
+	<p>your comment has been saved and is awaiting moderation, thank you for your feedback</p>
+</div>';
+						
+						}
+						else {
+							
+							$pageBody .= '
+<div class="dialog">
+	<p>There was a problem saving yourcomment</p>
+</div>';
+						
+						}
+					
+					}
+					else {
+						
+						$pageBody .= '
+<div class="dialog">
+	<p>you must provide your email address and name</p>
+</div>';
+					
+					}
+				
+				}
+				else {
+						
+					$pageBody .= '
+<div class="dialog">
+	<p>you comment cannot be empty</p>
+</div>';
+					
+				}
+			
+			}
+			break;
+	
+		}
+	
+	}
 	break;	
 
 }

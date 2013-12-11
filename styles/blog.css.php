@@ -99,6 +99,11 @@ body {
 		
 		}
 		
+		.mainColumn a {
+			text-decoration: none;
+		
+		}
+		
 		.mainColumn li {
 			margin-left: 2em;
 			

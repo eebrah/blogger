@@ -78,7 +78,7 @@ SELECT
 FROM
 	`commentDetails`
 WHERE
-	`uniqueID` = "' . mysql_escape_string( $this -> getUniqueID() ) . '"';
+	`uniqueID` = "' . $this -> getUniqueID() . '"';
 	
 		switch( $returnType ) {
 			
