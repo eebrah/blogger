@@ -99,6 +99,11 @@ body {
 		
 		}
 		
+		.mainColumn .comments {
+			padding: 1em 0;
+		
+		}
+		
 		.mainColumn .comment {
 			border: 1px dotted #999999;
 			padding: 0;
@@ -142,11 +147,6 @@ fieldset.info {
 
 }
 
-fieldset.info legend {
-	margin-bottom: 2em;
-
-}
-
 fieldset.info  label {
 	font-size: 1em;
 	font-weight: bold;
@@ -158,6 +158,8 @@ fieldset.info  label {
 	float: left;
 	text-align: right;
 	width: 30%;
+	
+	display: none;
 
 }
 
@@ -255,16 +257,14 @@ fieldset.info legend {
 	color: white;
 	background-color: #122348;
 
-	font-size: 1.2em;
+	font-size: 1em;
 	font-weight: bold;
 
 	text-transform: uppercase;
 	padding: 0.5em 4%;
-/*
-	border-top-left-radius: 0.5em;
-	border-top-right-radius: 0.5em;
-*/
-	margin-bottom: 1.9em;
+
+	border-top-left-radius: 0.2em;
+	border-top-right-radius: 0.2em;
 
 	width: 92%;
 
