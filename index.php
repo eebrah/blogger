@@ -171,6 +171,7 @@ switch( $section ) {
 
 							$pageBody .= '
 	<div class="comment">
+		<p class="meta">on ' . substr( $comment -> getDateCreated(), 0, 10 ) . ' at ' . substr( $comment -> getDateCreated(), 11, 8 ) . ', ' . $comment -> getAuthor() . ' said :</p>
 		' . Markdown( $comment -> getBody() ) . '
 	</div>';
 	
@@ -184,6 +185,7 @@ switch( $section ) {
 	<form action="?section=comments&amp;action=new"
 	      method="post">
 		<fieldset class="info">
+			<legend>leave a comment</legend>
 			<input type="hidden"
 			       name="target"
 			       value="' . $_REQUEST[ "target" ] . '" />
@@ -252,7 +254,7 @@ switch( $section ) {
 					
 					if( isset( $_POST[ "name" ] ) && isset( $_POST[ "email" ] ) && isset( $_POST[ "target" ] ) ) {
 						
-						$comment = new Comment( "00000", $_POST[ "comment" ], $_POST[ "target" ] );
+						$comment = new Comment( "00000", $_POST[ "comment" ], $_POST[ "target" ], $_POST[ "name" ], $_POST[ "email" ] );
 						
 						if( $comment -> saveToDB() ) {
 							

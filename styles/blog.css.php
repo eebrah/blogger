@@ -99,6 +99,27 @@ body {
 		
 		}
 		
+		.mainColumn .comment {
+			border: 1px dotted #999999;
+			padding: 0;
+			
+			margin: 0.5em 0;
+		
+		}
+		
+		.mainColumn .comment p {
+			margin: 0.5em 0;
+			padding: 0 1em;
+		
+		}
+		
+		.mainColumn .comment p.meta {
+			background-color: #E5E5FF;
+			padding: 0.33em 1em;
+			margin: 0;
+		
+		}
+		
 		.mainColumn a {
 			text-decoration: none;
 		
