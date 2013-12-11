@@ -180,7 +180,7 @@ switch( $section ) {
 				<!-- <label for="email">email</label> -->
 				<input type="email"
 				       name="email"
-				       placeholder="user@mail.com"
+				       placeholder="your email address [ will not be shared with anyone ]"
 				       required="required" />
 			</div>
 		</fieldset>
