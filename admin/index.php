@@ -17,6 +17,13 @@ require_once( "../Article.class.php" );
 require_once( "../Comment.class.php" );
 
 require_once( "../markdown.php" );
+require_once( "../kses.php" );
+
+$allowed = array('b' => array(),
+                 'i' => array(),
+                 'a' => array('href' => 1, 'title' => 1),
+                 'p' => array('align' => 1),
+                 'br' => array());
 
 session_start();
 
@@ -97,7 +104,16 @@ if( isset( $_SESSION[ "blog" ][ "admin" ][ "loggedIn" ] ) ) {
 							<a href="?section=comments">comments</a>
 							<ul>
 								<li>
-									<a href="?section=comments&amp;action=list">list comments</a>
+									<a href="?section=comments&amp;action=list">all<sup> [ ' . count( getComments( 0, "all" ) ) . ' ]</sup></a>
+								</li>
+								<li>
+									<a href="?section=comments&amp;action=list&amp;filter=pending">pending<sup> [ ' . count( getComments( 0, "pending" ) ) . ' ]</sup></a>
+								</li>
+								<li>
+									<a href="?section=comments&amp;action=list&amp;filter=approved">approved<sup> [ ' . count( getComments( 0, "approved" ) ) . ' ]</sup></a>
+								</li>
+								<li>
+									<a href="?section=comments&amp;action=list&amp;filter=rejected">suspended<sup> [ ' . count( getComments( 0, "rejected" ) ) . ' ]</sup></a>
 								</li>
 							</ul>
 						</li> <!--
@@ -524,7 +540,7 @@ if( isset( $_SESSION[ "blog" ][ "admin" ][ "loggedIn" ] ) ) {
 							$pageBody .= '
 		<div class="article">		
 			<h1>' . $article -> getTitle() . '</h1>			
-			' . Markdown( $article -> getBody() ) . '
+			' . kses( Markdown( $article -> getBody() ), $allowed ) . '
 			<p>' . $article -> getDateCreated() . '</p>
 		</div>';
 		
@@ -558,6 +574,8 @@ if( isset( $_SESSION[ "blog" ][ "admin" ][ "loggedIn" ] ) ) {
 		
 		case "comments" : {
 			
+			$pageBody .= '<h1>comments</h1>';
+			
 			$action = "list";
 			
 			if( isset( $_REQUEST[ "action" ] ) ) {
@@ -570,7 +588,15 @@ if( isset( $_SESSION[ "blog" ][ "admin" ][ "loggedIn" ] ) ) {
 				
 				case "list" : {
 					
-					$comments = getComments();
+					$filter = "all";
+					
+					if( isset( $_REQUEST[ "filter" ] ) ) {
+						
+						$filter = $_REQUEST[ "filter" ];
+						
+					}
+					
+					$comments = getComments( 0, $filter );
 					
 					if( count( $comments ) > 0 ) {
 					
@@ -582,6 +608,7 @@ if( isset( $_SESSION[ "blog" ][ "admin" ][ "loggedIn" ] ) ) {
 					<th>#</th>
 					<th>datetime</th>
 					<th>article title</th>
+					<th>comment</th>
 					<th>actions</th>
 				</tr>
 			</thead>
@@ -600,28 +627,31 @@ if( isset( $_SESSION[ "blog" ][ "admin" ][ "loggedIn" ] ) ) {
 					<td>' . $count . '</td>
 					<td>' . $comment -> getDateCreated() . '</td>
 					<td>' . substr( $article -> getTitle(), 0, 30 ) . ' ...</td>
+					<td>' . kses( substr( $comment -> getBody(), 0, 30 ), $allowed ) . ' ...</td>
 					<td>
-						<ul>
+						<ul class="actions">
 							<li>
-								<a href="?section=comments&amp;action=view&amp;target=">view</a>
+								<a href="?section=comments&amp;action=view&amp;target=' . $commentID . '">view</a>
 							</li>
 							<li>
-								<a href="?section=comments&amp;action=edit&amp;target=">edit</a>
+								<a href="?section=comments&amp;action=toggle&amp;target=' . $commentID . '">toggle</a>
 							</li>
 						</ul>
 					</td>
 				</tr>';
 				
-						}
+								$count++;
 				
-						$pageBody .= '
+							}
+				
+							$pageBody .= '
 			</tbody>
 		</table>
 	</div>';
 
 					}
 					else {
-						
+					
 						$pageBody .= '
 	<div class="dialog">
 		<p>You have no comments</p>
@@ -698,9 +728,86 @@ if( isset( $_SESSION[ "blog" ][ "admin" ][ "loggedIn" ] ) ) {
 						
 						$pageBody .= '
 	<div class="comment">
-		' . Markdown( $comment -> getBody ) . '
+		' . kses( Markdown( $comment -> getBody() ), $allowed ) . '
 	</div>';
 					
+					}
+					else {
+						
+						$pageBody .= '
+	<div class="dialog">
+		<p>you have to specify an comment to view</p>
+	</div>';
+							
+					}
+				
+				}
+				break;
+			
+				case "toggle" : {
+					
+					if( isset( $_REQUEST[ "target" ] ) ) {
+						
+						$comment = new Comment( $_REQUEST[ "target" ] );
+						
+						$message = 'wut?' . $comment -> getStatus();
+						
+						switch( $comment -> getStatus() ) {
+							
+							case "0" : {
+							
+								$comment -> setStatus( 1 );
+								$comment -> setDatePublished( date( "Y-m-d H:i:s" ) );
+								
+								$message = 'comment approved';
+								
+							}
+							break;
+							
+							case "1" : {
+								
+								$comment -> setStatus( 2 );
+								
+								$message = 'comment suspended';
+								
+							}
+							break;
+							
+							case "2" : {
+							
+								$comment -> setStatus( 1 );
+								
+								$message = 'comment approved';
+								
+							}
+							break;
+							
+							default : {
+								
+								$comment -> setStatus( 0 );
+							
+							}
+							break;
+						
+						}
+						
+						if( $comment -> updateDB() ) {
+
+							$pageBody .= '
+<div>
+	<p>' . $message . '!</p>
+</div>';
+						
+						}
+						else {
+							
+							$pageBody .= '
+<div>
+	<p>could not toggle comment :(</p>
+</div>';
+						
+						}
+
 					}
 					else {
 						

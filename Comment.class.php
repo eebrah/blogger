@@ -151,31 +151,40 @@ SET
 WHERE
 	`uniqueID` = "' . $this -> getUniqueID() . '"';
 		
-		if( $returnType == "bool" ) {
-		
-			$returnValue = false;
+		switch( $returnType ) {
 			
-			try {
+			case "0" : {
+		
+				$returnValue = false;
+				
+				parent::updateDB();
+				
+				try {
 
-				$statement = $dbh -> prepare( $query );
-				$statement -> execute();
+					$statement = $dbh -> prepare( $query );
+					$statement -> execute();
+					
+					$returnValue = true;
+					
+				} 
+				catch( PDOException $e ) {
+					
+				   print "Error!: " . $e -> getMessage();			   
+				   die();
+				   
+				}		
+			
+			}
+			break;
+			
+			case "1" : {
 				
-				$returnValue = true;
-				
-			} 
-			catch( PDOException $e ) {
-				
-			   print "Error!: " . $e -> getMessage();			   
-			   die();
-			   
-			}		
+				$returnValue = $query . parent::updateDB( 1 );
+			
+			}
+			break;
 			
 		}
-		else {
-			
-			$returnValue = $query;
-		
-		}		
 		
 		return $returnValue;
 	
@@ -213,23 +222,56 @@ function getComments( $returnType = 0, $filter = "all" ) {
 	GLOBAL $dbh;
 
 	$query = '
-SELECT
-	`uniqueID`
-FROM
-	`commentDetails`
+SELECT 
+	  `commentDetails`.`uniqueID` 
+	, `postDetails`.`dateCreated`
+FROM 
+	`commentDetails` 
+	INNER JOIN 
+		`postDetails` 
+	ON  
+		`commentDetails`.`uniqueID` = `postDetails`.`uniqueID`
 WHERE';
 
-	if( $filter == "all" ) {
+	switch( $filter ) {
+		
+		case "approved" : {
 
-		$query .= '
+	$query .= '
+	`postDetails`.`status` = 1';
+
+		}
+		break;
+		
+		case "pending" : {
+
+	$query .= '
+	`postDetails`.`status` = 0';
+
+		}
+		break;
+		
+		case "rejected" : {
+
+	$query .= '
+	`postDetails`.`status` = 2';
+
+		}
+		break;
+		
+		case "all" :
+		default : {
+
+	$query .= '
 	1';
-
+		}
+		break;
+	
 	}
-	else {
-
-		// more to come?
-
-	}
+	
+$query .= '
+ORDER BY
+	`dateCreated` DESC';	
 
 	switch( $returnType ) {
 

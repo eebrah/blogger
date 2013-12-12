@@ -92,6 +92,7 @@ SELECT
 	  `body`
 	, `dateCreated`
 	, `datePublished`
+	, `status`
 FROM
 	`postDetails`
 WHERE
@@ -113,6 +114,7 @@ WHERE
 					$this -> setBody( $row[ "body" ] );
 					$this -> setDateCreated( $row[ "dateCreated" ] );
 					$this -> setDatePublished( $row[ "datePublished" ] );
+					$this -> setStatus( $row[ "status" ] );
 					
 					$returnValue = true;
 					
@@ -150,33 +152,41 @@ SET
 	  `body` = "' .  $this -> getBody() . '"
 	, `dateCreated` = "' .  $this -> getDateCreated() . '"
 	, `datePublished` = "' .  $this -> getDatePublished() . '"
+	, `status` = "' . $this -> getStatus() . '"
 WHERE
 	`uniqueID` = "' . $this -> getUniqueID() . '"';
 		
-		if( $returnType == "bool" ) {
-		
-			$returnValue = false;
+		switch( $returnType ) {
 			
-			try {
+			case "0" : {
+		
+				$returnValue = false;
+				
+				try {
 
-				$statement = $dbh -> prepare( $query );
-				$statement -> execute();
-				
-				$returnValue = true;
-				
-			} 
-			catch( PDOException $e ) {
-				
-			   print "Error!: " . $e -> getMessage();			   
-			   die();
-			   
-			}		
+					$statement = $dbh -> prepare( $query );
+					$statement -> execute();
+					
+					$returnValue = true;
+					
+				} 
+				catch( PDOException $e ) {
+					
+				   print "Error!: " . $e -> getMessage();			   
+				   die();
+				   
+				}		
+
+			}
+			break;
 			
-		}
-		else {
+			case "1" : {
+				
+				$returnValue = $query;
 			
-			$returnValue = $query;
-		
+			}
+			break;
+			
 		}		
 		
 		return $returnValue;

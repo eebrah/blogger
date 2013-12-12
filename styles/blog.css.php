@@ -98,7 +98,7 @@ body {
 		
 		}
 		
-		.mainColumn p {
+		p {
 			margin: 1em 0;
 			line-height: 1.5em;
 		

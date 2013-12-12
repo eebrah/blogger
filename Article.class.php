@@ -95,12 +95,18 @@ WHERE
 	`uniqueID` = "' .  $this -> getUniqueID() . '"';
 	
 		$queryComments = '
-SELECT
-	`uniqueID`
-FROM
-	`commentDetails`
+SELECT 
+	`commentDetails`.`uniqueID` 
+FROM 
+	`commentDetails` 
+	INNER JOIN 
+		`postDetails` 
+	ON  
+		`commentDetails`.`uniqueID` = `postDetails`.`uniqueID`
 WHERE
-	`article` = "' . $this -> getUniqueID() . '"';
+	`commentDetails`.`article` = "' . $this -> getUniqueID() . '"
+AND
+	`postDetails`.`status` = 1';
 	
 		switch( $returnType ) {
 			
@@ -223,23 +229,42 @@ function getArticles( $returnType = 0, $filter = "all" ) {
 	GLOBAL $dbh;
 
 	$query = '
-SELECT
-	`uniqueID`
-FROM
-	`articleDetails`
+SELECT 
+	  `articleDetails`.`uniqueID` 
+	, `postDetails`.`dateCreated`
+FROM 
+	`articleDetails` 
+	INNER JOIN 
+		`postDetails` 
+	ON  
+		`articleDetails`.`uniqueID` = `postDetails`.`uniqueID`
 WHERE';
 
-	if( $filter == "all" ) {
+	switch( $filter ) {
+		
+		case "all" :
+		default : {
 
-		$query .= '
+			$query .= '
 	1';
+	
+		}
+		break;
+		
+		case "published" : {}
+		break;
+		
+		case "pending" : {}
+		break;
+		
+		case "retracted" : {}
+		break;
 
 	}
-	else {
-
-		// more to come?
-
-	}
+	
+	$query .= '
+ORDER BY
+	`dateCreated` DESC';
 
 	switch( $returnType ) {
 

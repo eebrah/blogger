@@ -15,6 +15,13 @@ require_once( "./Article.class.php" );
 require_once( "./Comment.class.php" );
 
 require_once( "./markdown.php" );
+require_once( "./kses.php" );
+
+$allowed = array('b' => array(),
+                 'i' => array(),
+                 'a' => array('href' => 1, 'title' => 1),
+                 'p' => array('align' => 1),
+                 'br' => array());
 
 { // page building variables
 
@@ -47,7 +54,7 @@ $pageHeader = '<!DOCTYPE html>
 			</div>
 			<div class="body">
 				<div class="sideColumn">
-					<p>Hi there, I am ' . $name . ' and I am a ' . $proffesion . ' from Nairobi, Kenya</p>';
+					<p>Hi there, my name&apos;s ' . $name . ' and I am a ' . $proffesion . ' from Nairobi, Kenya</p>';
 				
 $pageFooter = '
 				</div>
@@ -159,7 +166,7 @@ switch( $section ) {
 					$pageBody .= '
 <div class="article">
 	<h1>' . $article -> getTitle() . '</h1>
-	' . Markdown( $article -> getBody() ) . '
+	' . kses( Markdown( $article -> getBody() ), $allowed ) . '
 </div>
 <div class="comments">';
 
@@ -172,7 +179,7 @@ switch( $section ) {
 							$pageBody .= '
 	<div class="comment">
 		<p class="meta">on ' . substr( $comment -> getDateCreated(), 0, 10 ) . ' at ' . substr( $comment -> getDateCreated(), 11, 8 ) . ', ' . $comment -> getAuthor() . ' said :</p>
-		' . Markdown( $comment -> getBody() ) . '
+		' . kses( Markdown( $comment -> getBody() ), $allowed ) . '
 	</div>';
 	
 						}
