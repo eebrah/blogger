@@ -19,6 +19,10 @@ require_once( "./kses.php" );
 
 $allowed = array('b' => array(),
                  'i' => array(),
+                 'ul' => array(),
+                 'ol' => array(),
+                 'li' => array(),
+                 'blockquote' => array(),
                  'a' => array('href' => 1, 'title' => 1),
                  'p' => array('align' => 1),
                  'br' => array());
@@ -41,12 +45,13 @@ $output = '';
 $pageTitle = '';				// set the pages title here
 
 $pageHeader = '<!DOCTYPE html>
-<html>
+<html manifest="cache.manifest"
+      xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<title>' . $pageTitle . '</title>
 		<link type="text/css"
 		      rel="stylesheet"
-		      href="./styles/blog.css.php">
+		      href="./styles/blog.css.php" />
 	</head>
 	<body>
 		<div class="wrapper">
@@ -168,7 +173,8 @@ switch( $section ) {
 	<h1>' . $article -> getTitle() . '</h1>
 	' . kses( Markdown( $article -> getBody() ), $allowed ) . '
 </div>
-<div class="comments">';
+<div class="comments">
+	<h2>comments</h2>';
 
 					if( count( $article -> getComments() ) > 0 ) {
 	
@@ -178,7 +184,7 @@ switch( $section ) {
 
 							$pageBody .= '
 	<div class="comment">
-		<p class="meta">on ' . substr( $comment -> getDateCreated(), 0, 10 ) . ' at ' . substr( $comment -> getDateCreated(), 11, 8 ) . ', ' . $comment -> getAuthor() . ' said :</p>
+		<p class="meta">on ' . substr( $comment -> getDateCreated(), 0, 10 ) . ' at ' . substr( $comment -> getDateCreated(), 11, 5 ) . ', ' . $comment -> getAuthor() . ' said :</p>
 		' . kses( Markdown( $comment -> getBody() ), $allowed ) . '
 	</div>';
 	
@@ -328,7 +334,7 @@ if( isset( $_REQUEST[ "format" ] ) ) {
 switch( $format ) {
 	
 	case "html" : {
-		
+		header( 'Content-type: application/xml' );
 		$output = $pageHeader . $pageBody . $pageFooter;
 	
 	}
@@ -347,7 +353,11 @@ switch( $format ) {
 	}
 	break;
 	
-	case "xml" : {}
+	case "xml" : {	
+	
+		header( 'Content-type: application/xml' );
+	
+	}
 	break;
 	
 	case "pdf" : {}

@@ -182,8 +182,8 @@ fieldset.info input, fieldset.info textarea {
 	border: 1px solid #999999;
 	border-radius: 0.2em;
 
-	font-family: sans-serif;
-	font-size: 1em;
+	font-family: sans-serif; 
+	font-size: 0.9em;
 
 	width: 56%;
 	width: calc( 100% - ( 2% * 2 ) );

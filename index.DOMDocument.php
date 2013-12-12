@@ -4,7 +4,6 @@ if( substr_count( $_SERVER[ 'HTTP_ACCEPT_ENCODING' ], 'gzip' ) ) { ob_start( "ob
 
 session_start();
 
-
 require_once( "./User.class.php" );
 require_once( "./Token.class.php" );
 require_once( "./Article.class.php" );
@@ -32,64 +31,12 @@ $pageTitle = '';				// set the pages title here
 
 }
 
+$doc = new DOMDocument();
 
-$doc = new DOMDocument('1.0');
+$doc -> validateOnParse = true;
+$doc -> loadHTML( file_get_contents( 'template.xhtml' ) );
 
-$root = $doc->createElement('html');
-$root = $doc->appendChild($root);
-
-$head = $doc->createElement('head');
-$head = $root->appendChild($head);
-
-$title = $doc->createElement('title');
-$title = $head->appendChild($title);
-
-$text = $doc->createTextNode('This is the title');
-$text = $title->appendChild($text);
-
-
-$link = $doc->createElement( 'link' );
-$link -> setAttribute( 'type', 'text/css' );
-$link -> setAttribute( 'href', './styles/blog.css.php' );
-$link -> setAttribute( 'rel', 'stylesheet' );
-
-$link = $head -> appendChild( $link );
-
-$body = $doc -> createElement( 'body' );
-$body = $root -> appendChild( $body );
-
-$wrapper = $doc -> createElement( 'div' );
-$wrapper = $body -> appendChild( $wrapper );
-$wrapper -> setAttribute( "class", "wrapper" );
-
-$header = $doc -> createElement( 'div' );
-$header = $wrapper -> appendChild( $header );
-$header -> setAttribute( "class", "header" );
-
-$body = $doc -> createElement( 'div' );
-$body = $wrapper -> appendChild( $body );
-$body -> setAttribute( "class", "body" );
-
-// side column
-$sideColumn = $doc -> createElement( 'div' );
-$sideColumn = $body -> appendChild( $sideColumn );
-$sideColumn -> setAttribute( "class", "sideColumn" );
-
-$p = $doc -> createElement( 'p' );
-
-$text = $doc -> createTextNode( 'Hi there, I am ' . $name . ' and I am a ' . $proffesion . ' from Nairobi, Kenya' );
-$text = $p -> appendChild( $text );
-
-$p = $sideColumn -> appendChild( $p );
-
-// main column
-$mainColumn = $doc -> createElement( 'div' );
-$mainColumn = $body -> appendChild( $mainColumn );
-$mainColumn -> setAttribute( "class", "mainColumn" );
-
-$footer = $doc -> createElement( 'div' );
-$footer = $wrapper -> appendChild( $footer );
-$footer -> setAttribute( "class", "footer" );
+$mainColumn = $doc -> getElementById( "mainColumn" );
 
 $section = "articles";
 
@@ -137,7 +84,7 @@ switch( $section ) {
 							
 							$href = $doc -> createElement( 'a' );
 							$href = $articleElement -> appendChild( $href );
-							$href -> setAttribute( 'href', '?section=articles&amp;action=view&amp;target=' . $articles[ $i ] );
+							$href -> setAttribute( 'href', '?section=articles&action=view&target=' . $articles[ $i ] );
 							
 							$articleHeader = $doc -> createElement( 'h1' );
 							
@@ -203,10 +150,10 @@ switch( $section ) {
 					
 					$articleHeader = $articleElement -> appendChild( $articleHeader );
 
+					$fragment = $doc -> createDocumentFragment();
+					$fragment -> appendXML( Markdown( $article -> getBody() ) );
 
-					$text = $doc -> createTextNode( $article -> getBody() );
-					$text = $articleElement -> appendChild( $text );
-
+					$articleBody = $articleElement -> appendChild( $fragment );
 
 					$articleElement = $mainColumn -> appendChild( $articleElement );
 					$articleElement -> setAttribute( "class", "article" );	
@@ -230,58 +177,26 @@ switch( $section ) {
 							$text = $doc -> createTextNode( 'on ' . substr( $comment -> getDateCreated(), 0, 10 ) . ' at ' . substr( $comment -> getDateCreated(), 11, 8 ) . ', ' . $comment -> getAuthor() . ' said :' );
 							$text = $p -> appendChild( $text );
 									
-							$p = $commentElement -> appendChild( $p );	
+							$p = $commentElement -> appendChild( $p );
+							$p -> setAttribute( "class", "meta" );							
+
+							$fragment = $doc -> createDocumentFragment();
+							$fragment -> appendXML( Markdown( $comment -> getBody() ) );
+
+							$commentElement -> appendChild( $fragment );							
 
 							$commentElement = $commentsElement -> appendChild( $commentElement );
-							$commentElement -> setAttribute( "class", "comments" );
-/*
-							$pageBody .= '
-	<div class="comment">
-		<p class="meta">on ' . substr( $comment -> getDateCreated(), 0, 10 ) . ' at ' . substr( $comment -> getDateCreated(), 11, 8 ) . ', ' . $comment -> getAuthor() . ' said :</p>
-		' . Markdown( $comment -> getBody() ) . '
-	</div>';
-*/	
+							$commentElement -> setAttribute( "class", "comment" );
+
+							$commentForm = $doc -> getElementById( 'commentFormSample' );
+							
+							//$mainColumn -> removeChild( $commentFormSample ); 
+							$mainColumn -> appendChild( $commentForm );
+								
 						}
 						
 					}
-/*
-					$pageBody .= '
-</div>
-<div class="commentForm">
-	<form action="?section=comments&amp;action=new"
-	      method="post">
-		<fieldset class="info">
-			<legend>please leave a comment</legend>
-			<input type="hidden"
-			       name="target"
-			       value="' . $_REQUEST[ "target" ] . '" />
-			<div class="row">
-				<textarea name="comment"
-				          placeholder="your comment here"></textarea>
-			</div>
-		</fieldset>
-		<fieldset class="info identity">
-			<div class="row">
-				<!-- <label for="name">name</label> -->
-				<input type="text"
-				       name="name"
-				       placeholder="your name"
-				       required="required" />
-			</div>
-			<div class="row">
-				<!-- <label for="email">email</label> -->
-				<input type="email"
-				       name="email"
-				       placeholder="your email address [ will not be shared with anyone ]"
-				       required="required" />
-			</div>
-		</fieldset>
-		<fieldset class="buttons">
-			<button type="submit">comment</button>
-		</fieldset>
-	</form>
-</div>';
-*/				
+					
 				}
 				else {
 			
@@ -305,6 +220,108 @@ switch( $section ) {
 		}
 	
 	} 
+	break;
+	
+	case "comments" : {
+		
+		$action = "add";
+		
+		if( isset( $_REQUEST[ "action" ] ) ) {
+			
+			$action = $_REQUEST[ "action" ];
+		
+		}
+		
+		switch( $action ) {
+			
+			case "add" :
+			case "new" :
+			default : {
+				
+				if( isset( $_POST[ "comment" ] ) ) {
+					
+					if( isset( $_POST[ "name" ] ) && isset( $_POST[ "email" ] ) && isset( $_POST[ "target" ] ) && ( filter_var( $_POST[ "email" ], FILTER_VALIDATE_EMAIL ) ) ) {
+						
+						$comment = new Comment( "00000", $_POST[ "comment" ], $_POST[ "target" ], $_POST[ "name" ], $_POST[ "email" ] );
+						
+						if( $comment -> saveToDB() ) {
+					
+							$dialog = $doc -> createElement( 'div' );
+							
+							$p = $doc -> createElement( 'p' );
+							
+							$text = $doc -> createTextNode( 'your comment has been saved and is awaiting moderation, thank you for your feedback' );
+							$text = $p -> appendChild( $text );
+									
+							$p = $dialog -> appendChild( $p );
+
+							$dialog = $mainColumn -> appendChild( $dialog );
+							$dialog -> setAttribute( "class", "dialog" );							
+						/*	
+							$pageBody .= '
+<div class="dialog">
+	<p>your comment has been saved and is awaiting moderation, thank you for your feedback</p>
+</div>';
+						*/
+						}
+						else {
+							/*
+							$pageBody .= '
+<div class="dialog">
+	<p>There was a problem saving yourcomment</p>
+</div>';
+						*/
+							$dialog = $doc -> createElement( 'div' );
+							
+							$p = $doc -> createElement( 'p' );
+							
+							$text = $doc -> createTextNode( 'There was a problem saving your comment, please click back and try again' );
+							$text = $p -> appendChild( $text );
+									
+							$p = $dialog -> appendChild( $p );
+
+							$dialog = $mainColumn -> appendChild( $dialog );
+							$dialog -> setAttribute( "class", "dialog" );
+						}
+					
+					}
+					else {
+						
+						$dialog = $doc -> createElement( 'div' );
+						
+						$p = $doc -> createElement( 'p' );
+						
+						$text = $doc -> createTextNode( 'you must provide a valid email address and a name' );
+						$text = $p -> appendChild( $text );
+								
+						$p = $dialog -> appendChild( $p );
+
+						$dialog = $mainColumn -> appendChild( $dialog );
+						$dialog -> setAttribute( "class", "dialog" );
+/*						
+						$pageBody .= '
+<div class="dialog">
+	<p>you must provide a valid email address and a name</p>
+</div>';
+*/					
+					}
+				
+				}
+				else {
+						
+					$pageBody .= '
+<div class="dialog">
+	<p>you comment cannot be empty</p>
+</div>';
+					
+				}
+			
+			}
+			break;
+	
+		}
+	
+	}
 	break;
 	
 }

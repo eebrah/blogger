@@ -21,6 +21,7 @@ require_once( "../kses.php" );
 
 $allowed = array('b' => array(),
                  'i' => array(),
+                 'pre' => array('class' => 1),
                  'a' => array('href' => 1, 'title' => 1),
                  'p' => array('align' => 1),
                  'br' => array());
@@ -102,7 +103,10 @@ if( isset( $_SESSION[ "blog" ][ "admin" ][ "loggedIn" ] ) ) {
 									<a href="?section=articles&amp;action=list&amp;filter=pending">pending <sup>[ ' . count( getArticles( 0, "pending" ) ) . ' ]</sup></a>
 								</li>
 								<li>
-									<a href="?section=articles&amp;action=add&amp;filter=withdrawn">withdrawn <sup>[ ' . count( getArticles( 0, "withdrawn" ) ) . ' ]</sup></a>
+									<a href="?section=articles&amp;action=list&amp;filter=withdrawn">withdrawn <sup>[ ' . count( getArticles( 0, "withdrawn" ) ) . ' ]</sup></a>
+								</li>
+								<li>
+									<a href="?section=articles&amp;action=add">new</a>
 								</li>
 							</ul>
 						</li>
