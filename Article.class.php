@@ -251,13 +251,29 @@ WHERE';
 		}
 		break;
 		
-		case "published" : {}
+		case "published" : {
+			
+			$query .= '
+	`postDetails`.`status` = 1';
+		
+		}
 		break;
 		
-		case "pending" : {}
+		case "pending" : {
+			
+			$query .= '
+	`postDetails`.`status` = 0';
+		
+		}
 		break;
 		
-		case "retracted" : {}
+		case "retracted" :
+		case "withdrawn" : {
+			
+			$query .= '
+	`postDetails`.`status` = 2';
+		
+		}
 		break;
 
 	}
@@ -366,6 +382,5 @@ WHERE
 	return $returnValue;
 
 }
-
 
 ?>
