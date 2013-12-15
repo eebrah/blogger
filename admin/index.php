@@ -84,7 +84,7 @@ if( isset( $_SESSION[ "blog" ][ "admin" ][ "loggedIn" ] ) ) {
 
 	$currentUser = new User( $_SESSION[ "blog" ][ "admin" ][ "loggedIn" ] );
 	
-	$articles = getArticles( 0 );
+	$articles = getArticles( 0, "all" );
 
 {
 	$pageBody .= '
@@ -388,6 +388,9 @@ if( isset( $_SESSION[ "blog" ][ "admin" ][ "loggedIn" ] ) ) {
 							<li>
 								<a href="?section=articles&amp;action=edit&amp;target=' . $articleID . '">edit</a>
 							</li>
+							<li>
+								<a href="?section=articles&amp;action=toggle&amp;target=' . $articleID . '">toggle</a>
+							</li>
 						</ul>
 					</td>
 				</tr>';
@@ -578,6 +581,81 @@ if( isset( $_SESSION[ "blog" ][ "admin" ][ "loggedIn" ] ) ) {
 						$pageBody .= '
 	<div class="dialog">
 		<p>you have to specify an article to view</p>
+	</div>';
+							
+					}
+				
+				}
+				break;
+			
+				case "toggle" : {
+					
+					if( isset( $_REQUEST[ "target" ] ) ) {
+						
+						$article = new article( $_REQUEST[ "target" ] );
+						
+						switch( $article -> getStatus() ) {
+							
+							case "0" : {
+							
+								$article -> setStatus( 1 );
+								$article -> setDatePublished( date( "Y-m-d H:i:s" ) );
+								
+								$message = 'article approved';
+								
+							}
+							break;
+							
+							case "1" : {
+								
+								$article -> setStatus( 2 );
+								
+								$message = 'article suspended';
+								
+							}
+							break;
+							
+							case "2" : {
+							
+								$article -> setStatus( 1 );
+								
+								$message = 'article approved';
+								
+							}
+							break;
+							
+							default : {
+								
+								$article -> setStatus( 0 );
+							
+							}
+							break;
+						
+						}
+						
+						if( $article -> updateDB() ) {
+
+							$pageBody .= '
+<div>
+	<p>' . $message . '!</p>
+</div>';
+						
+						}
+						else {
+							
+							$pageBody .= '
+<div>
+	<p>could not toggle article :(</p>
+</div>';
+						
+						}
+
+					}
+					else {
+						
+						$pageBody .= '
+	<div class="dialog">
+		<p>you have to specify an article whose status to modify</p>
 	</div>';
 							
 					}

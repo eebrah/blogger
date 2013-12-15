@@ -21,6 +21,7 @@ body {
 	div.wrapper {
 		background-color: inherit;
 
+		width: 100%;
 		max-width: 1000px;
 		
 		margin: 2em auto;
@@ -49,7 +50,6 @@ body {
 
 		div.sideColumn {
 			width: 26%;
-			min-height: 20em;
 
 			background-color: #122348;
 			color: white;
@@ -65,7 +65,6 @@ body {
 
 		div.mainColumn {
 			width: 60%;
-			min-height: 20em;
 
 			background-color: white;
 			color: black;
@@ -291,3 +290,36 @@ div.row:hover {
 	background-color: #FCDE9F;
 
 }
+
+@media (max-device-width: 480px) {
+
+
+	div.wrapper {
+		width: 100%;
+		max-width: 100%;
+	
+		margin: 0;
+
+	}
+	
+	div.header {
+		margin: 0;
+		border-radius: 0;
+	
+	}
+
+	div.sideColumn, div.mainColumn {
+
+		width: 94%;
+		
+		margin: 0;
+
+		display: block;
+		clear: both;
+		
+		border-radius: 0;
+
+	}
+
+}
+

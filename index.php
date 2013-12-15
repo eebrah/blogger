@@ -48,6 +48,7 @@ $pageHeader = '<!DOCTYPE html>
 <html manifest="cache.manifest"
       xmlns="http://www.w3.org/1999/xhtml">
 	<head>
+		<meta name="viewport" content="width=device-width" />
 		<title>' . $pageTitle . '</title>
 		<link type="text/css"
 		      rel="stylesheet"
@@ -114,7 +115,7 @@ switch( $section ) {
 			
 			case "list" : {
 					
-				$articles = getArticles();
+				$articles = getArticles( 0, "published", "any", "any", "all" );
 				
 				if( count( $articles ) > 0 ) {
 					

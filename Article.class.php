@@ -224,7 +224,7 @@ WHERE
 
 }
 
-function getArticles( $returnType = 0, $filter = "all" ) {
+function getArticles( $returnType = 0, $filter = "all", $from = "any", $to = "any", $author = "all" ) {
 
 	GLOBAL $dbh;
 
@@ -240,6 +240,8 @@ FROM
 		`articleDetails`.`uniqueID` = `postDetails`.`uniqueID`
 WHERE';
 
+	$extended = false;
+
 	switch( $filter ) {
 		
 		case "all" :
@@ -248,6 +250,8 @@ WHERE';
 			$query .= '
 	1';
 	
+			$extended = true;
+	
 		}
 		break;
 		
@@ -255,6 +259,8 @@ WHERE';
 			
 			$query .= '
 	`postDetails`.`status` = 1';
+	
+			$extended = true;
 		
 		}
 		break;
@@ -263,6 +269,8 @@ WHERE';
 			
 			$query .= '
 	`postDetails`.`status` = 0';
+	
+			$extended = true;
 		
 		}
 		break;
@@ -272,10 +280,26 @@ WHERE';
 			
 			$query .= '
 	`postDetails`.`status` = 2';
+	
+			$extended = true;
 		
 		}
 		break;
 
+	}
+	
+	if( $from != "any" ) {
+		
+		if( $extended == true ) {
+			
+			$query .= '
+AND';
+		
+		}
+		
+		$query .= '
+	`postDetails`.`dateCreated` >= "' . $from . '"';
+	
 	}
 	
 	$query .= '

@@ -38,6 +38,10 @@ $doc -> loadHTML( file_get_contents( 'template.xhtml' ) );
 
 $mainColumn = $doc -> getElementById( "mainColumn" );
 
+$commentsElement = $doc -> getElementById( "commentsDiv" );
+$commentElementTemplate = $doc -> getElementById( "commentDiv" );
+$commentFormSample = $doc -> getElementById( 'commentFormSample' );
+
 $section = "articles";
 
 if( isset( $_REQUEST[ "section" ] ) ) {
@@ -61,6 +65,9 @@ switch( $section ) {
 		switch( $action ) {
 			
 			case "list" : {
+					
+				$mainColumn -> removeChild( $commentsElement );	
+				$mainColumn -> removeChild( $commentFormSample );	
 					
 				$articles = getArticles();
 				
@@ -136,6 +143,9 @@ switch( $section ) {
 			break;
 						
 			case "view" : {
+					
+				$mainColumn -> removeChild( $commentsElement );	
+				$mainColumn -> removeChild( $commentFormSample );	
 				
 				if( isset( $_REQUEST[ "target" ] ) ) {
 					
@@ -156,44 +166,40 @@ switch( $section ) {
 					$articleBody = $articleElement -> appendChild( $fragment );
 
 					$articleElement = $mainColumn -> appendChild( $articleElement );
-					$articleElement -> setAttribute( "class", "article" );	
+					$articleElement -> setAttribute( "class", "article" );
 					
-					 
-					$commentsElement = $doc -> createElement( 'div' );	
-
-					$commentsElement = $mainColumn -> appendChild( $commentsElement );
-					$commentsElement -> setAttribute( "class", "comments" );	 					
-
 					if( count( $article -> getComments() ) > 0 ) {
 	
 						foreach( $article -> getComments() as $commentID ) {
 						
 							$comment = new Comment( $commentID );
-							 
-							$commentElement = $doc -> createElement( 'div' );
-					
-							$p = $doc -> createElement( 'p' );
+							
+							$commentElement = $commentElementTemplate -> cloneNode( true );
+							$commentElement -> removeAttribute( "id" );
+
+							$ps = $commentElement -> getElementsByTagName( 'p' );
+							
+							$p = $ps -> item( 0 );
 							
 							$text = $doc -> createTextNode( 'on ' . substr( $comment -> getDateCreated(), 0, 10 ) . ' at ' . substr( $comment -> getDateCreated(), 11, 8 ) . ', ' . $comment -> getAuthor() . ' said :' );
 							$text = $p -> appendChild( $text );
-									
-							$p = $commentElement -> appendChild( $p );
-							$p -> setAttribute( "class", "meta" );							
-
+				
 							$fragment = $doc -> createDocumentFragment();
 							$fragment -> appendXML( Markdown( $comment -> getBody() ) );
 
-							$commentElement -> appendChild( $fragment );							
-
-							$commentElement = $commentsElement -> appendChild( $commentElement );
-							$commentElement -> setAttribute( "class", "comment" );
-
-							$commentForm = $doc -> getElementById( 'commentFormSample' );
+							$commentElement -> appendChild( $fragment );								
 							
-							//$mainColumn -> removeChild( $commentFormSample ); 
-							$mainColumn -> appendChild( $commentForm );
-								
+							$commentsElement -> appendChild( $commentElement );
+
 						}
+
+						$commentsElement -> removeChild( $commentElementTemplate );
+
+						$mainColumn -> appendChild( $commentsElement );
+
+						$commentForm = $commentFormSample -> cloneNode( true ); 
+						
+						$mainColumn -> appendChild( $commentForm );
 						
 					}
 					
@@ -256,21 +262,11 @@ switch( $section ) {
 							$p = $dialog -> appendChild( $p );
 
 							$dialog = $mainColumn -> appendChild( $dialog );
-							$dialog -> setAttribute( "class", "dialog" );							
-						/*	
-							$pageBody .= '
-<div class="dialog">
-	<p>your comment has been saved and is awaiting moderation, thank you for your feedback</p>
-</div>';
-						*/
+							$dialog -> setAttribute( "class", "dialog" );
+							
 						}
 						else {
-							/*
-							$pageBody .= '
-<div class="dialog">
-	<p>There was a problem saving yourcomment</p>
-</div>';
-						*/
+							
 							$dialog = $doc -> createElement( 'div' );
 							
 							$p = $doc -> createElement( 'p' );
@@ -298,22 +294,24 @@ switch( $section ) {
 
 						$dialog = $mainColumn -> appendChild( $dialog );
 						$dialog -> setAttribute( "class", "dialog" );
-/*						
-						$pageBody .= '
-<div class="dialog">
-	<p>you must provide a valid email address and a name</p>
-</div>';
-*/					
+											
 					}
 				
 				}
 				else {
 						
-					$pageBody .= '
-<div class="dialog">
-	<p>you comment cannot be empty</p>
-</div>';
+					$dialog = $doc -> createElement( 'div' );
+						
+					$p = $doc -> createElement( 'p' );
 					
+					$text = $doc -> createTextNode( 'you comment cannot be empty' );
+					$text = $p -> appendChild( $text );
+							
+					$p = $dialog -> appendChild( $p );
+
+					$dialog = $mainColumn -> appendChild( $dialog );
+					$dialog -> setAttribute( "class", "dialog" );	
+				
 				}
 			
 			}

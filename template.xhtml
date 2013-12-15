@@ -2,7 +2,9 @@
 <html manifest="cache.manifest"
       xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<title></title>
+		<meta name="viewport" 
+		      content="width=device-width" />
+		<title>template</title>
 		<link type="text/css"
 		      rel="stylesheet"
 		      href="./styles/blog.css.php" />
@@ -19,13 +21,15 @@
 				     id="mainColumn"><!--
 					<div class="article">
 						<h1>testing 1,2,3</h1>
-					</div>
-					<div class="comments">
+					</div> -->
+					<div class="comments"
+					     id="commentsDiv">
 						<h2>comments</h2>
-						<div class="comment">
+						<div class="comment"
+						     id="commentDiv">
 							<p class="meta"></p>
 						</div>
-					</div> -->
+					</div> 
 					<div class="commentForm"
 					     id="commentFormSample">
 						<form action="?section=comments&amp;action=new"
