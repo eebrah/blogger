@@ -71,7 +71,7 @@ body {
 
 			float: right;
 			
-			padding: 0 3%;
+			padding: 2em 3%;
 			
 			border-radius: 0.2em;
 			
@@ -128,6 +128,11 @@ body {
 			background-color: #E5E5FF;
 			padding: 0.33em 1em;
 			margin: 0;
+		
+		}
+		
+		.mainColumn .commentForm {
+			box-shadow: 0 0 0.5em #BBBBBB;
 		
 		}
 		
@@ -231,7 +236,7 @@ fieldset.buttons {
 fieldset.buttons button {
 	border-radius: 0.2em;
 
-	padding: 0.3em 1em 0.4em;
+	padding: 0.3em 1.2em 0.4em;
 	margin: 0;
 
 	color: white;
@@ -239,9 +244,10 @@ fieldset.buttons button {
 
 	float: left;
 
-	width: 30%;
+	font-weight: bold;
 
 	text-shadow: 0 -1px 0 rgba( 0, 0, 0, 0.25 );
+	text-transform: capitalize;
 
 }
 

@@ -42,6 +42,97 @@ $commentsElement = $doc -> getElementById( "commentsDiv" );
 $commentElementTemplate = $doc -> getElementById( "commentDiv" );
 $commentFormSample = $doc -> getElementById( 'commentFormSample' );
 
+
+{ // page building functions
+	
+function generateDialog( $message = "hello, world!" ) {
+		
+	GLOBAL $doc;	
+					
+	$dialog = $doc -> createElement( 'div' );
+	
+	$p = $doc -> createElement( 'p' );
+	
+	$text = $doc -> createTextNode( $message );
+	$text = $p -> appendChild( $text );
+			
+	$p = $dialog -> appendChild( $p );
+
+//	$dialog = $mainColumn -> appendChild( $dialog );
+	$dialog -> setAttribute( "class", "dialog" );	
+	
+	return $dialog;
+										
+}
+
+function generateComment( $commentID ) {
+	
+	GLOBAL $commentElementTemplate, $doc;
+						
+	$comment = new Comment( $commentID );
+							
+	$commentElement = $commentElementTemplate -> cloneNode( true );
+	$commentElement -> removeAttribute( "id" );
+
+	$ps = $commentElement -> getElementsByTagName( 'p' );
+							
+	$p = $ps -> item( 0 );
+							
+	$text = $doc -> createTextNode( 'on ' . substr( $comment -> getDateCreated(), 0, 10 ) . ' at ' . substr( $comment -> getDateCreated(), 11, 5 ) . ', ' . $comment -> getAuthor() . ' said :' );
+	$text = $p -> appendChild( $text );
+				
+	$fragment = $doc -> createDocumentFragment();
+	$fragment -> appendXML( Markdown( $comment -> getBody() ) );
+
+	$commentElement -> appendChild( $fragment );
+							
+	return $commentElement;
+
+}
+
+function generatePost( $articleID ) {
+	
+	GLOBAL $doc, $commentsElement, $commentElementTemplate;
+					
+	$article = new Article( $articleID );
+	 
+	$articleElement = $doc -> createElement( 'div' );
+	
+	$articleHeader = $doc -> createElement( 'h1' );
+	
+	$text = $doc -> createTextNode( $article -> getTitle() );
+	$text = $articleHeader -> appendChild( $text );
+	
+	$articleHeader = $articleElement -> appendChild( $articleHeader );
+
+	$fragment = $doc -> createDocumentFragment();
+	$fragment -> appendXML( Markdown( $article -> getBody() ) );
+
+	$articleBody = $articleElement -> appendChild( $fragment );
+	
+	if( count( $article -> getComments() ) > 0 ) {
+	
+		foreach( $article -> getComments() as $commentID ) {			// Display each comment	
+			
+			$commentsElement -> appendChild( generateComment( $commentID ) );
+
+		}
+
+		$commentsElement -> removeChild( $commentElementTemplate );		// Remove the comment template
+
+		$articleElement -> appendChild( $commentsElement );				// Attach the comments
+		
+	}					
+	
+	$articleElement -> setAttribute( "class", "article" );
+	
+	return $articleElement;
+
+}
+
+}
+
+
 $section = "articles";
 
 if( isset( $_REQUEST[ "section" ] ) ) {
@@ -69,7 +160,7 @@ switch( $section ) {
 				$mainColumn -> removeChild( $commentsElement );	
 				$mainColumn -> removeChild( $commentFormSample );	
 					
-				$articles = getArticles();
+				$articles = getArticles( 0, "published" );
 				
 				if( count( $articles ) > 0 ) {
 					
@@ -105,18 +196,8 @@ switch( $section ) {
 			
 						}
 						else {
-							
-							$dialog = $doc -> createElement( 'div' );
-							
-							$p = $doc -> createElement( 'p' );
-							
-							$text = $doc -> createTextNode( 'Sorry, the article referenced no longer exists' );
-							$text = $p -> appendChild( $text );
-									
-							$p = $dialog -> appendChild( $p );
-	
-							$dialog = $mainColumn -> appendChild( $dialog );
-							$dialog -> setAttribute( "class", "dialog" );
+
+							$mainColumn -> appendChild( generateDialog( 'Sorry, the article referenced no longer exists' ) );
 	
 						}
 						
@@ -124,7 +205,7 @@ switch( $section ) {
 					
 				}
 				else {
-					
+/*					
 					$dialog = $doc -> createElement( 'div' );
 					
 					$p = $doc -> createElement( 'p' );
@@ -136,6 +217,8 @@ switch( $section ) {
 
 					$dialog = $mainColumn -> appendChild( $dialog );
 					$dialog -> setAttribute( "class", "dialog" );	
+*/					
+					$mainColumn -> appendChild( generateDialog( 'no posts yet :(' ) );
 										
 				}
 							
@@ -147,76 +230,19 @@ switch( $section ) {
 				$mainColumn -> removeChild( $commentsElement );	
 				$mainColumn -> removeChild( $commentFormSample );	
 				
-				if( isset( $_REQUEST[ "target" ] ) ) {
+				if( isset( $_REQUEST[ "target" ] ) ) { 
 					
 					$article = new Article( $_REQUEST[ "target" ] );
-					 
-					$articleElement = $doc -> createElement( 'div' );
 					
-					$articleHeader = $doc -> createElement( 'h1' );
+					$mainColumn -> appendChild( generatePost( $_REQUEST[ "target" ] ) );
 					
-					$text = $doc -> createTextNode( $article -> getTitle() );
-					$text = $articleHeader -> appendChild( $text );
-					
-					$articleHeader = $articleElement -> appendChild( $articleHeader );
-
-					$fragment = $doc -> createDocumentFragment();
-					$fragment -> appendXML( Markdown( $article -> getBody() ) );
-
-					$articleBody = $articleElement -> appendChild( $fragment );
-
-					$articleElement = $mainColumn -> appendChild( $articleElement );
-					$articleElement -> setAttribute( "class", "article" );
-					
-					if( count( $article -> getComments() ) > 0 ) {
-	
-						foreach( $article -> getComments() as $commentID ) {
-						
-							$comment = new Comment( $commentID );
-							
-							$commentElement = $commentElementTemplate -> cloneNode( true );
-							$commentElement -> removeAttribute( "id" );
-
-							$ps = $commentElement -> getElementsByTagName( 'p' );
-							
-							$p = $ps -> item( 0 );
-							
-							$text = $doc -> createTextNode( 'on ' . substr( $comment -> getDateCreated(), 0, 10 ) . ' at ' . substr( $comment -> getDateCreated(), 11, 8 ) . ', ' . $comment -> getAuthor() . ' said :' );
-							$text = $p -> appendChild( $text );
-				
-							$fragment = $doc -> createDocumentFragment();
-							$fragment -> appendXML( Markdown( $comment -> getBody() ) );
-
-							$commentElement -> appendChild( $fragment );								
-							
-							$commentsElement -> appendChild( $commentElement );
-
-						}
-
-						$commentsElement -> removeChild( $commentElementTemplate );
-
-						$mainColumn -> appendChild( $commentsElement );
-
-						$commentForm = $commentFormSample -> cloneNode( true ); 
-						
-						$mainColumn -> appendChild( $commentForm );
-						
-					}
+					$commentForm = $commentFormSample -> cloneNode( true ); 	// get and attach the comment form
+					$mainColumn -> appendChild( $commentForm );
 					
 				}
 				else {
-			
-					$dialog = $doc -> createElement( 'div' );
 					
-					$p = $doc -> createElement( 'p' );
-					
-					$text = $doc -> createTextNode( 'you have to specify an article to view' );
-					$text = $p -> appendChild( $text );
-							
-					$p = $dialog -> appendChild( $p );
-
-					$dialog = $mainColumn -> appendChild( $dialog );
-					$dialog -> setAttribute( "class", "dialog" );			
+					$mainColumn -> appendChild( generateDialog( 'you have to specify an article to view' ) );
 						
 				}
 			
@@ -252,65 +278,26 @@ switch( $section ) {
 						
 						if( $comment -> saveToDB() ) {
 					
-							$dialog = $doc -> createElement( 'div' );
-							
-							$p = $doc -> createElement( 'p' );
-							
-							$text = $doc -> createTextNode( 'your comment has been saved and is awaiting moderation, thank you for your feedback' );
-							$text = $p -> appendChild( $text );
-									
-							$p = $dialog -> appendChild( $p );
-
-							$dialog = $mainColumn -> appendChild( $dialog );
-							$dialog -> setAttribute( "class", "dialog" );
+							$mainColumn -> appendChild( generateDialog( 'your comment has been saved and is awaiting moderation, thank you for your feedback' ) );
 							
 						}
 						else {
 							
-							$dialog = $doc -> createElement( 'div' );
+							$mainColumn -> appendChild( generateDialog( 'There was a problem saving your comment, please click back and try again' ) );
 							
-							$p = $doc -> createElement( 'p' );
-							
-							$text = $doc -> createTextNode( 'There was a problem saving your comment, please click back and try again' );
-							$text = $p -> appendChild( $text );
-									
-							$p = $dialog -> appendChild( $p );
-
-							$dialog = $mainColumn -> appendChild( $dialog );
-							$dialog -> setAttribute( "class", "dialog" );
 						}
 					
 					}
 					else {
 						
-						$dialog = $doc -> createElement( 'div' );
-						
-						$p = $doc -> createElement( 'p' );
-						
-						$text = $doc -> createTextNode( 'you must provide a valid email address and a name' );
-						$text = $p -> appendChild( $text );
-								
-						$p = $dialog -> appendChild( $p );
-
-						$dialog = $mainColumn -> appendChild( $dialog );
-						$dialog -> setAttribute( "class", "dialog" );
+						$mainColumn -> appendChild( generateDialog( 'you must provide a valid email address and a name' ) );
 											
 					}
 				
 				}
 				else {
-						
-					$dialog = $doc -> createElement( 'div' );
-						
-					$p = $doc -> createElement( 'p' );
 					
-					$text = $doc -> createTextNode( 'you comment cannot be empty' );
-					$text = $p -> appendChild( $text );
-							
-					$p = $dialog -> appendChild( $p );
-
-					$dialog = $mainColumn -> appendChild( $dialog );
-					$dialog -> setAttribute( "class", "dialog" );	
+					$mainColumn -> appendChild( generateDialog( 'you comment cannot be empty' ) );
 				
 				}
 			
@@ -323,61 +310,6 @@ switch( $section ) {
 	break;
 	
 }
-
-/*
-$text = $doc -> createTextNode( 'Hello, World!' );
-$text = $paragraph -> appendChild( $text );
-
-
-$dialog = $doc -> createElement( 'div' );
-$dialog = $wrapper -> appendChild( $dialog );
-$dialog -> setAttribute( "class", "dialog" );
-
-$form = $doc -> createElement( 'form' );
-$form = $dialog -> appendChild( $form );
-$form -> setAttribute( "method", "post" );
-
-$fieldset_info = $doc -> createElement( 'fieldset' ); 
-$fieldset_info = $dialog -> appendChild( $fieldset_info );
-$fieldset_info -> setAttribute( "class", "info" );
-
-
-$row = $doc -> createElement( 'div' );
-$row = $fieldset_info -> appendChild( $row );
-$row -> setAttribute( "class", "row" );
-
-$label = $doc -> createElement( 'label' );
-$label = $row -> appendChild( $label );
-$text = $doc -> createTextNode( 'tracking number :' );
-$text = $label -> appendChild( $text );
-
-$input = $doc -> createElement( 'input' );
-$input = $row -> appendChild( $input );
-$input -> setAttribute( "type", "text" );
-$input -> setAttribute( "placeholder", "the parcel's tracking number" );
-
-
-$fieldset_buttons = $doc -> createElement( 'fieldset' ); 
-$fieldset_buttons = $dialog -> appendChild( $fieldset_buttons );
-$fieldset_buttons -> setAttribute( "class", "buttons" );
-
-
-$btn_reset = $doc -> createElement( 'button' );
-$btn_reset = $fieldset_buttons -> appendChild( $btn_reset );
-$btn_reset -> setAttribute( 'type', 'reset' );
-$text = $doc -> createTextNode( 'reset' );
-$text = $btn_reset -> appendChild( $text );
-
-
-$btn_submit = $doc -> createElement( 'button' );
-$btn_submit = $fieldset_buttons -> appendChild( $btn_submit );
-$btn_submit -> setAttribute( 'type', 'submit' );
-$text = $doc -> createTextNode( 'submit' );
-$text = $btn_submit -> appendChild( $text );
-
-*/
-
-
 
 header( 'Content-type: text/html' );
 
